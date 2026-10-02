@@ -37,6 +37,7 @@ class DatabaseManager:
         """
         self.db_name = db_name
         self.connection = sqlite3.connect(self.db_name)
+        self.connection.execute("PRAGMA foreign_keys = ON;")
         self.cursor = self.connection.cursor()
         self._create_tables()
 
