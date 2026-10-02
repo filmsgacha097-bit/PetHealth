@@ -48,7 +48,8 @@ class DatabaseManager:
         Использует IF NOT EXISTS, чтобы не пересоздавать таблицы при повторных запусках.
         """
         # Таблица питомцев
-        self.cursor.execute("""
+        self.cursor.execute(
+            """
             CREATE TABLE IF NOT EXISTS pets (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL,
@@ -57,10 +58,12 @@ class DatabaseManager:
                 photo_path TEXT,
                 notes TEXT
             )
-        """)
+        """
+        )
 
         # Таблица записей о здоровье
-        self.cursor.execute("""
+        self.cursor.execute(
+            """
             CREATE TABLE IF NOT EXISTS records (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 pet_id INTEGER NOT NULL,
@@ -70,30 +73,36 @@ class DatabaseManager:
                 next_date TEXT,
                 FOREIGN KEY (pet_id) REFERENCES pets (id) ON DELETE CASCADE
             )
-        """)
+        """
+        )
 
         # Таблица справочника заболеваний
-        self.cursor.execute("""
+        self.cursor.execute(
+            """
             CREATE TABLE IF NOT EXISTS diseases (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL UNIQUE,
                 description TEXT,
                 species TEXT
             )
-        """)
+        """
+        )
 
         # Таблица справочника симптомов
-        self.cursor.execute("""
+        self.cursor.execute(
+            """
             CREATE TABLE IF NOT EXISTS symptoms (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 disease_id INTEGER NOT NULL,
                 name TEXT NOT NULL,
                 FOREIGN KEY (disease_id) REFERENCES diseases (id) ON DELETE CASCADE
             )
-        """)
+        """
+        )
 
         # Таблица истории болезней питомцев (медкарта)
-        self.cursor.execute("""
+        self.cursor.execute(
+            """
             CREATE TABLE IF NOT EXISTS pet_diseases (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 pet_id INTEGER NOT NULL,
@@ -106,15 +115,20 @@ class DatabaseManager:
                 FOREIGN KEY (pet_id) REFERENCES pets (id) ON DELETE CASCADE,
                 FOREIGN KEY (disease_id) REFERENCES diseases (id) ON DELETE CASCADE
             )
-        """)
+        """
+        )
 
         self.connection.commit()
-            # ========== CRUD для питомцев ==========
+        # ========== CRUD для питомцев ==========
 
-    def add_pet(self, name: str, species: str,
-                birth_date: Optional[str] = None,
-                photo_path: Optional[str] = None,
-                notes: Optional[str] = None) -> int:
+    def add_pet(
+        self,
+        name: str,
+        species: str,
+        birth_date: Optional[str] = None,
+        photo_path: Optional[str] = None,
+        notes: Optional[str] = None,
+    ) -> int:
         """Добавляет нового питомца в базу данных.
 
         Args:
@@ -130,7 +144,7 @@ class DatabaseManager:
         self.cursor.execute(
             "INSERT INTO pets (name, species, birth_date, photo_path, notes) "
             "VALUES (?, ?, ?, ?, ?)",
-            (name, species, birth_date, photo_path, notes)
+            (name, species, birth_date, photo_path, notes),
         )
         self.connection.commit()
         return self.cursor.lastrowid
@@ -155,9 +169,14 @@ class DatabaseManager:
 
     # ========== CRUD для записей о здоровье ==========
 
-    def add_record(self, pet_id: int, record_type: str, date: str,
-                   value: Optional[str] = None,
-                   next_date: Optional[str] = None) -> int:
+    def add_record(
+        self,
+        pet_id: int,
+        record_type: str,
+        date: str,
+        value: Optional[str] = None,
+        next_date: Optional[str] = None,
+    ) -> int:
         """Добавляет запись о здоровье питомца.
 
         Args:
@@ -173,7 +192,7 @@ class DatabaseManager:
         self.cursor.execute(
             "INSERT INTO records (pet_id, record_type, date, value, next_date) "
             "VALUES (?, ?, ?, ?, ?)",
-            (pet_id, record_type, date, value, next_date)
+            (pet_id, record_type, date, value, next_date),
         )
         self.connection.commit()
         return self.cursor.lastrowid
@@ -197,8 +216,12 @@ class DatabaseManager:
 
     # ========== CRUD для справочника заболеваний ==========
 
-    def add_disease(self, name: str, description: Optional[str] = None,
-                    species: Optional[str] = None) -> int:
+    def add_disease(
+        self,
+        name: str,
+        description: Optional[str] = None,
+        species: Optional[str] = None,
+    ) -> int:
         """Добавляет заболевание в справочник.
 
         Args:
@@ -211,7 +234,7 @@ class DatabaseManager:
         """
         self.cursor.execute(
             "INSERT INTO diseases (name, description, species) VALUES (?, ?, ?)",
-            (name, description, species)
+            (name, description, species),
         )
         self.connection.commit()
         return self.cursor.lastrowid
@@ -227,10 +250,16 @@ class DatabaseManager:
 
     # ========== CRUD для медкарты (болезни питомцев) ==========
 
-    def add_pet_disease(self, pet_id: int, disease_id: int, date_start: str,
-                        date_end: Optional[str] = None, status: str = "активно",
-                        treatment: Optional[str] = None,
-                        notes: Optional[str] = None) -> int:
+    def add_pet_disease(
+        self,
+        pet_id: int,
+        disease_id: int,
+        date_start: str,
+        date_end: Optional[str] = None,
+        status: str = "активно",
+        treatment: Optional[str] = None,
+        notes: Optional[str] = None,
+    ) -> int:
         """Добавляет запись о болезни питомца.
 
         Args:
@@ -249,7 +278,7 @@ class DatabaseManager:
             "INSERT INTO pet_diseases "
             "(pet_id, disease_id, date_start, date_end, status, treatment, notes) "
             "VALUES (?, ?, ?, ?, ?, ?, ?)",
-            (pet_id, disease_id, date_start, date_end, status, treatment, notes)
+            (pet_id, disease_id, date_start, date_end, status, treatment, notes),
         )
         self.connection.commit()
         return self.cursor.lastrowid
