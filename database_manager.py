@@ -108,6 +108,167 @@ class DatabaseManager:
         """)
 
         self.connection.commit()
+            # ========== CRUD для питомцев ==========
+
+    def add_pet(self, name: str, species: str,
+                birth_date: Optional[str] = None,
+                photo_path: Optional[str] = None,
+                notes: Optional[str] = None) -> int:
+        """Добавляет нового питомца в базу данных.
+
+        Args:
+            name (str): Кличка питомца.
+            species (str): Вид животного.
+            birth_date (Optional[str]): Дата рождения.
+            photo_path (Optional[str]): Путь к фото.
+            notes (Optional[str]): Заметки.
+
+        Returns:
+            int: ID добавленного питомца.
+        """
+        self.cursor.execute(
+            "INSERT INTO pets (name, species, birth_date, photo_path, notes) "
+            "VALUES (?, ?, ?, ?, ?)",
+            (name, species, birth_date, photo_path, notes)
+        )
+        self.connection.commit()
+        return self.cursor.lastrowid
+
+    def get_all_pets(self) -> list:
+        """Возвращает список всех питомцев.
+
+        Returns:
+            list: Список кортежей (id, name, species, birth_date, photo_path, notes).
+        """
+        self.cursor.execute("SELECT * FROM pets")
+        return self.cursor.fetchall()
+
+    def delete_pet(self, pet_id: int) -> None:
+        """Удаляет питомца по ID. Записи и болезни удаляются каскадно.
+
+        Args:
+            pet_id (int): ID питомца.
+        """
+        self.cursor.execute("DELETE FROM pets WHERE id = ?", (pet_id,))
+        self.connection.commit()
+
+    # ========== CRUD для записей о здоровье ==========
+
+    def add_record(self, pet_id: int, record_type: str, date: str,
+                   value: Optional[str] = None,
+                   next_date: Optional[str] = None) -> int:
+        """Добавляет запись о здоровье питомца.
+
+        Args:
+            pet_id (int): ID питомца.
+            record_type (str): Тип записи (vaccine, parasite, weight, note).
+            date (str): Дата процедуры.
+            value (Optional[str]): Значение записи.
+            next_date (Optional[str]): Дата следующей процедуры.
+
+        Returns:
+            int: ID добавленной записи.
+        """
+        self.cursor.execute(
+            "INSERT INTO records (pet_id, record_type, date, value, next_date) "
+            "VALUES (?, ?, ?, ?, ?)",
+            (pet_id, record_type, date, value, next_date)
+        )
+        self.connection.commit()
+        return self.cursor.lastrowid
+
+    def get_records(self, pet_id: int) -> list:
+        """Возвращает все записи о здоровье питомца.
+
+        Args:
+            pet_id (int): ID питомца.
+
+        Returns:
+            list: Список записей.
+        """
+        self.cursor.execute("SELECT * FROM records WHERE pet_id = ?", (pet_id,))
+        return self.cursor.fetchall()
+
+    def delete_record(self, record_id: int) -> None:
+        """Удаляет запись о здоровье по ID."""
+        self.cursor.execute("DELETE FROM records WHERE id = ?", (record_id,))
+        self.connection.commit()
+
+    # ========== CRUD для справочника заболеваний ==========
+
+    def add_disease(self, name: str, description: Optional[str] = None,
+                    species: Optional[str] = None) -> int:
+        """Добавляет заболевание в справочник.
+
+        Args:
+            name (str): Название заболевания.
+            description (Optional[str]): Описание.
+            species (Optional[str]): Для какого вида характерно.
+
+        Returns:
+            int: ID добавленного заболевания.
+        """
+        self.cursor.execute(
+            "INSERT INTO diseases (name, description, species) VALUES (?, ?, ?)",
+            (name, description, species)
+        )
+        self.connection.commit()
+        return self.cursor.lastrowid
+
+    def get_diseases(self) -> list:
+        """Возвращает все заболевания из справочника.
+
+        Returns:
+            list: Список заболеваний.
+        """
+        self.cursor.execute("SELECT * FROM diseases")
+        return self.cursor.fetchall()
+
+    # ========== CRUD для медкарты (болезни питомцев) ==========
+
+    def add_pet_disease(self, pet_id: int, disease_id: int, date_start: str,
+                        date_end: Optional[str] = None, status: str = "активно",
+                        treatment: Optional[str] = None,
+                        notes: Optional[str] = None) -> int:
+        """Добавляет запись о болезни питомца.
+
+        Args:
+            pet_id (int): ID питомца.
+            disease_id (int): ID заболевания.
+            date_start (str): Дата начала.
+            date_end (Optional[str]): Дата окончания.
+            status (str): Статус (активно, вылечено, хроническое).
+            treatment (Optional[str]): Лечение.
+            notes (Optional[str]): Заметки.
+
+        Returns:
+            int: ID добавленной записи.
+        """
+        self.cursor.execute(
+            "INSERT INTO pet_diseases "
+            "(pet_id, disease_id, date_start, date_end, status, treatment, notes) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (pet_id, disease_id, date_start, date_end, status, treatment, notes)
+        )
+        self.connection.commit()
+        return self.cursor.lastrowid
+
+    def get_pet_diseases(self, pet_id: int) -> list:
+        """Возвращает все болезни питомца.
+
+        Args:
+            pet_id (int): ID питомца.
+
+        Returns:
+            list: Список записей о болезнях.
+        """
+        self.cursor.execute("SELECT * FROM pet_diseases WHERE pet_id = ?", (pet_id,))
+        return self.cursor.fetchall()
+
+    def delete_pet_disease(self, record_id: int) -> None:
+        """Удаляет запись о болезни питомца по ID."""
+        self.cursor.execute("DELETE FROM pet_diseases WHERE id = ?", (record_id,))
+        self.connection.commit()
 
     def close(self) -> None:
         """Закрытие подключения к базе данных."""
