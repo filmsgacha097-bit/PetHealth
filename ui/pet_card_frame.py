@@ -12,6 +12,7 @@ import customtkinter as ctk
 from tkinter import messagebox
 
 from ui.add_record_dialog import AddRecordDialog
+from ui.add_disease_dialog import AddDiseaseDialog
 
 
 class PetCardFrame(ctk.CTkFrame):
@@ -167,7 +168,8 @@ class PetCardFrame(ctk.CTkFrame):
             diseases_header, text="+ Добавить заболевание",
             fg_color="#FEB2B1", hover_color="#FFB1CB",
             text_color="#FFFFFF", font=("Nunito", 12, "bold"),
-            width=200, height=36
+            width=200, height=36,
+            command=self._open_add_disease
         ).pack(side="right")
 
         pet_diseases = self.db.get_pet_diseases(self.pet_id)
@@ -241,6 +243,13 @@ class PetCardFrame(ctk.CTkFrame):
         for widget in self.winfo_children():
             widget.destroy()
         self._build_ui()
+
+    def _open_add_disease(self) -> None:
+        """Открывает диалог добавления заболевания."""
+        AddDiseaseDialog(
+            self, self.db, self.pet_id,
+            on_save=self._refresh
+        )
 
     def _delete_pet(self) -> None:
         """Удаляет питомца после подтверждения и возвращает на главный экран."""
