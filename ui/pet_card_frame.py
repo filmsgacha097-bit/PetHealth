@@ -11,6 +11,8 @@ PetHealthApp и переключается через него.
 import customtkinter as ctk
 from tkinter import messagebox
 
+from ui.add_record_dialog import AddRecordDialog
+
 
 class PetCardFrame(ctk.CTkFrame):
     """Экран карточки питомца.
@@ -42,7 +44,6 @@ class PetCardFrame(ctk.CTkFrame):
 
     def _build_ui(self) -> None:
         """Строит интерфейс карточки питомца."""
-        # Получаем данные питомца из БД
         pets = self.db.get_all_pets()
         pet = None
         for p in pets:
@@ -75,7 +76,9 @@ class PetCardFrame(ctk.CTkFrame):
         content.pack(fill="both", expand=True, padx=20, pady=10)
 
         # ===== Левая колонка — информация о питомце =====
-        left = ctk.CTkFrame(content, fg_color="#FFFFFF", corner_radius=24, width=380)
+        left = ctk.CTkFrame(
+            content, fg_color="#FFFFFF", corner_radius=24, width=380
+        )
         left.pack(side="left", fill="y", padx=(0, 10))
         left.pack_propagate(False)
 
@@ -134,7 +137,8 @@ class PetCardFrame(ctk.CTkFrame):
             records_header, text="+ Добавить запись",
             fg_color="#FFEF77", hover_color="#FFE055",
             text_color="#333333", font=("Nunito", 12, "bold"),
-            width=160, height=36
+            width=160, height=36,
+            command=self._open_add_record
         ).pack(side="right")
 
         records = self.db.get_records(self.pet_id)
@@ -224,6 +228,19 @@ class PetCardFrame(ctk.CTkFrame):
             row, text=treatment or "—",
             font=("Nunito", 12), text_color="#8A8A8A"
         ).pack(side="right", padx=15)
+
+    def _open_add_record(self) -> None:
+        """Открывает диалог добавления записи о здоровье."""
+        AddRecordDialog(
+            self, self.db, self.pet_id,
+            on_save=self._refresh
+        )
+
+    def _refresh(self) -> None:
+        """Обновляет экран карточки питомца (после изменений)."""
+        for widget in self.winfo_children():
+            widget.destroy()
+        self._build_ui()
 
     def _delete_pet(self) -> None:
         """Удаляет питомца после подтверждения и возвращает на главный экран."""
