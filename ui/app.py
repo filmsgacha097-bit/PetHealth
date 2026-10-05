@@ -73,7 +73,21 @@ class PetHealthApp(ctk.CTk):
         """Показывает главный экран со списком питомцев."""
         from ui.main_frame import MainFrame
         self.show_frame(MainFrame, db=self.db, on_logout=self.show_login)
+    
+    def show_pet_card(self, pet_id: int) -> None:
+        """Показывает карточку питомца.
 
+        Args:
+            pet_id (int): ID питомца.
+        """
+        from ui.pet_card_frame import PetCardFrame
+        self.show_frame(
+            PetCardFrame,
+            db=self.db,
+            pet_id=pet_id,
+            on_back=self.show_main
+        )
+        
     def on_close(self) -> None:
         """Корректное закрытие приложения."""
         self.db.close()

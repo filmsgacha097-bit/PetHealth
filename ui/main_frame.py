@@ -165,6 +165,14 @@ class MainFrame(ctk.CTkFrame):
         )
         btn_delete.pack(side="right", padx=15)
 
+        btn_open = ctk.CTkButton(
+            card, text="Открыть", fg_color="#BBE6FA",
+            hover_color="#A0D8F0", text_color="#333333",
+            font=("Nunito", 12, "bold"), width=100,
+            command=lambda: self.master.show_pet_card(pet_id)
+        )
+        btn_open.pack(side="right", padx=5)
+
     def _add_pet_dialog(self) -> None:
         """Открывает диалог добавления нового питомца."""
         dialog = ctk.CTkToplevel(self)
