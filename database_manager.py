@@ -297,6 +297,37 @@ class DatabaseManager:
         self.cursor.execute("SELECT * FROM diseases")
         return self.cursor.fetchall()
 
+    def add_symptom(self, disease_id: int, name: str) -> int:
+        """Добавляет симптом к заболеванию.
+
+        Args:
+            disease_id (int): ID заболевания.
+            name (str): Название симптома.
+
+        Returns:
+            int: ID добавленного симптома.
+        """
+        self.cursor.execute(
+            "INSERT INTO symptoms (disease_id, name) VALUES (?, ?)",
+            (disease_id, name)
+        )
+        self.connection.commit()
+        return self.cursor.lastrowid
+
+    def get_symptoms(self, disease_id: int) -> list:
+        """Возвращает симптомы заболевания.
+
+        Args:
+            disease_id (int): ID заболевания.
+
+        Returns:
+            list: Список симптомов (id, disease_id, name).
+        """
+        self.cursor.execute(
+            "SELECT * FROM symptoms WHERE disease_id = ?", (disease_id,)
+        )
+        return self.cursor.fetchall()
+
     # ========== CRUD для медкарты (болезни питомцев) ==========
 
     def add_pet_disease(

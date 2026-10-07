@@ -7,6 +7,7 @@
 import customtkinter as ctk
 
 from ui.add_disease_to_catalog_dialog import AddDiseaseToCatalogDialog
+from ui.add_symptom_dialog import AddSymptomDialog
 import sys
 
 class CatalogFrame(ctk.CTkFrame):
@@ -124,13 +125,12 @@ class CatalogFrame(ctk.CTkFrame):
 
         card = ctk.CTkFrame(
             self.list_frame, fg_color="#FFFFFF",
-            corner_radius=16, height=110
+            corner_radius=16
         )
         card.pack(fill="x", pady=8, padx=5)
-        card.pack_propagate(False)
 
         info_frame = ctk.CTkFrame(card, fg_color="transparent")
-        info_frame.pack(side="left", fill="both", expand=True, padx=20, pady=15)
+        info_frame.pack(fill="x", padx=20, pady=(15, 5))
 
         ctk.CTkLabel(
             info_frame, text=f"🩺 {name}",
@@ -146,9 +146,42 @@ class CatalogFrame(ctk.CTkFrame):
         if species:
             ctk.CTkLabel(
                 info_frame, text=f"Вид: {species}",
-                font=("Nunito", 11), text_color="#BBE6FA"
+                font=("Nunito", 11), text_color="#5A5A5A"
             ).pack(anchor="w")
+
+        # Симптомы
+        symptoms = self.db.get_symptoms(dis_id)
+        symptoms_text = ", ".join([s[2] for s in symptoms]) if symptoms else "—"
+        ctk.CTkLabel(
+            info_frame, text=f"Симптомы: {symptoms_text}",
+            font=("Nunito", 11), text_color="#8A8A8A",
+            wraplength=600, justify="left"
+        ).pack(anchor="w", pady=(5, 0))
+
+        # Кнопка добавления симптома
+        btn_frame = ctk.CTkFrame(card, fg_color="transparent")
+        btn_frame.pack(fill="x", padx=20, pady=(5, 15))
+
+        ctk.CTkButton(
+            btn_frame, text="+ Добавить симптом",
+            fg_color="#BBE6FA", hover_color="#A0D8F0",
+            text_color="#333333", font=("Nunito", 11, "bold"),
+            width=180, height=32, corner_radius=10,
+            command=lambda: self._open_add_symptom(dis_id, name)
+        ).pack(side="right")
 
     def _open_add_dialog(self) -> None:
         """Открывает диалог добавления заболевания в справочник."""
         AddDiseaseToCatalogDialog(self, self.db, on_save=self._refresh)
+
+    def _open_add_symptom(self, disease_id: int, disease_name: str) -> None:
+        """Открывает диалог добавления симптома.
+
+        Args:
+            disease_id (int): ID заболевания.
+            disease_name (str): Название заболевания.
+        """
+        AddSymptomDialog(
+            self, self.db, disease_id, disease_name,
+            on_save=self._refresh
+        )
