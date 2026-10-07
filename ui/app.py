@@ -92,6 +92,11 @@ class PetHealthApp(ctk.CTk):
         """Показывает справочник заболеваний."""
         from ui.catalog_frame import CatalogFrame
         self.show_frame(CatalogFrame, db=self.db, on_back=self.show_main)
+
+    def show_reminders(self) -> None:
+        """Показывает экран напоминаний."""
+        from ui.reminders_frame import RemindersFrame
+        self.show_frame(RemindersFrame, db=self.db, on_back=self.show_main)
         
     def on_close(self) -> None:
         """Корректное закрытие приложения."""

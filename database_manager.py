@@ -375,6 +375,50 @@ class DatabaseManager:
         self.cursor.execute("SELECT * FROM pet_diseases WHERE pet_id = ?", (pet_id,))
         return self.cursor.fetchall()
 
+    def get_upcoming_procedures(self, days: int = 7) -> list:
+        """Возвращает записи с предстоящими процедурами.
+
+        В список попадают записи из таблицы records, у которых
+        поле next_date наступило или наступит в ближайшие `days` дней.
+
+        Args:
+            days (int): Количество дней вперёд. По умолчанию 7.
+
+        Returns:
+            list: Список записей с информацией о питомце.
+                  Кортеж: (pet_name, pet_species, record_type, next_date, value).
+        """
+        from datetime import datetime, timedelta
+
+        today = datetime.now().date()
+        end_date = today + timedelta(days=days)
+
+        # Получаем все записи с заполненным next_date
+        self.cursor.execute("""
+            SELECT pets.name, pets.species, records.record_type,
+                   records.next_date, records.value
+            FROM records
+            JOIN pets ON records.pet_id = pets.id
+            WHERE records.next_date IS NOT NULL
+              AND records.next_date != ''
+        """)
+
+        all_records = self.cursor.fetchall()
+        upcoming = []
+
+        for record in all_records:
+            next_date_str = record[3]
+            try:
+                # Парсим дату в формате ДД.ММ.ГГГГ
+                next_date = datetime.strptime(next_date_str, "%d.%m.%Y").date()
+                if today <= next_date <= end_date:
+                    upcoming.append(record)
+            except ValueError:
+                # Если формат даты некорректный — пропускаем
+                continue
+
+        return upcoming
+
     def delete_pet_disease(self, record_id: int) -> None:
         """Удаляет запись о болезни питомца по ID."""
         self.cursor.execute("DELETE FROM pet_diseases WHERE id = ?", (record_id,))

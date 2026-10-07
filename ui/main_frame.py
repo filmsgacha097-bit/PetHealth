@@ -75,7 +75,8 @@ class MainFrame(ctk.CTkFrame):
         btn_reminders = ctk.CTkButton(
             header, text="Все напоминания", fg_color="#BBE6FA",
             hover_color="#A0D8F0", text_color="#333333",
-            font=("Nunito", 12, "bold"), width=140
+            font=("Nunito", 12, "bold"), width=140,
+            command=self.master.show_reminders
         )
         btn_reminders.pack(side="right", padx=5)
 
