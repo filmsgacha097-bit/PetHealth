@@ -37,9 +37,11 @@ class DatabaseManager:
         """
         self.db_name = db_name
         self.connection = sqlite3.connect(self.db_name)
+        # Включаем поддержку внешних ключей (для ON DELETE CASCADE)
         self.connection.execute("PRAGMA foreign_keys = ON;")
         self.cursor = self.connection.cursor()
         self._create_tables()
+        self._seed_initial_data()
 
     def _create_tables(self) -> None:
         """Создание таблиц базы данных, если они ещё не существуют.
@@ -119,6 +121,53 @@ class DatabaseManager:
         )
 
         self.connection.commit()
+
+    def _seed_initial_data(self) -> None:
+        """Заполняет справочник заболеваний и симптомов при первом запуске.
+
+        Если таблица diseases пустая — добавляет базовые заболевания
+        и связанные с ними симптомы. Если данные уже есть — ничего не делает.
+        """
+        self.cursor.execute("SELECT COUNT(*) FROM diseases")
+        count = self.cursor.fetchone()[0]
+
+        if count > 0:
+            return
+
+        diseases_data = [
+            ("Отит", "Воспаление уха", "Кошка, Собака"),
+            ("Чума плотоядных", "Вирусное заболевание", "Собака"),
+            ("Хламидиоз", "Инфекционное заболевание", "Кошка"),
+            ("Ожирение", "Избыточная масса тела", "Кошка, Собака, Грызун"),
+            ("Аллергия", "Реакция на раздражитель", "Кошка, Собака"),
+        ]
+
+        symptoms_data = {
+            "Отит": ["Зуд в ухе", "Покраснение", "Неприятный запах"],
+            "Чума плотоядных": ["Температура", "Отказ от еды", "Выделения из глаз"],
+            "Хламидиоз": ["Слезотечение", "Кашель", "Отказ от еды"],
+            "Ожирение": ["Избыточный вес", "Одышка"],
+            "Аллергия": ["Зуд", "Покраснение кожи", "Выпадение шерсти"],
+        }
+
+        disease_ids = {}
+        for name, description, species in diseases_data:
+            self.cursor.execute(
+                "INSERT INTO diseases (name, description, species) VALUES (?, ?, ?)",
+                (name, description, species)
+            )
+            disease_ids[name] = self.cursor.lastrowid
+
+        for disease_name, symptoms in symptoms_data.items():
+            disease_id = disease_ids[disease_name]
+            for symptom in symptoms:
+                self.cursor.execute(
+                    "INSERT INTO symptoms (disease_id, name) VALUES (?, ?)",
+                    (disease_id, symptom)
+                )
+
+        self.connection.commit()
+
         # ========== CRUD для питомцев ==========
 
     def add_pet(
