@@ -10,6 +10,7 @@ PetHealthApp и переключается через него.
 
 import customtkinter as ctk
 from tkinter import messagebox
+from ui.lottie_label import LottieLabel
 
 
 # Учебные учётные данные (демонстрация авторизации)
@@ -58,7 +59,17 @@ class LoginFrame(ctk.CTkFrame):
         ctk.CTkLabel(
             card, text="Войдите в свой аккаунт",
             font=("Nunito", 14), text_color="#8A8A8A"
-        ).pack(pady=(0, 30))
+        ).pack(pady=(0, 10))
+
+                # Lottie-анимация
+        try:
+            lottie = LottieLabel(
+                card, "assets/pet_animation.json",
+                size=(150, 150), duration=50
+            )
+            lottie.pack(pady=(0, 15))
+        except Exception:
+            pass
 
         # Поле "Логин"
         ctk.CTkLabel(
