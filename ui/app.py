@@ -87,6 +87,11 @@ class PetHealthApp(ctk.CTk):
             pet_id=pet_id,
             on_back=self.show_main
         )
+
+    def show_catalog(self) -> None:
+        """Показывает справочник заболеваний."""
+        from ui.catalog_frame import CatalogFrame
+        self.show_frame(CatalogFrame, db=self.db, on_back=self.show_main)
         
     def on_close(self) -> None:
         """Корректное закрытие приложения."""

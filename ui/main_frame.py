@@ -66,7 +66,8 @@ class MainFrame(ctk.CTkFrame):
         btn_catalog = ctk.CTkButton(
             header, text="Справочник", fg_color="#BBE6FA",
             hover_color="#A0D8F0", text_color="#333333",
-            font=("Nunito", 12, "bold"), width=120
+            font=("Nunito", 12, "bold"), width=120,
+            command=self.master.show_catalog
         )
         btn_catalog.pack(side="right", padx=5)
 
@@ -214,6 +215,9 @@ class MainFrame(ctk.CTkFrame):
         entry_notes = ctk.CTkTextbox(dialog, width=400, height=80,
                                      fg_color="#FFFFFF", border_color="#BBE6FA")
         entry_notes.pack(pady=(0, 20))
+                # Enter в полях — сохранить
+        for entry in (entry_name, entry_date):
+            entry.bind("<Return>", lambda e: save())
 
         def save():
             """Сохраняет питомца в БД и обновляет список."""

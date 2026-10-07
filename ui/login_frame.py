@@ -84,6 +84,10 @@ class LoginFrame(ctk.CTkFrame):
         )
         self.entry_password.pack(pady=(0, 25))
 
+        # Enter в любом поле — вход
+        self.entry_login.bind("<Return>", lambda e: self._login())
+        self.entry_password.bind("<Return>", lambda e: self._login())
+
         # Кнопка "Войти"
         ctk.CTkButton(
             card, text="Войти", width=320, height=44,

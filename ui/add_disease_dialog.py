@@ -121,6 +121,10 @@ class AddDiseaseDialog(ctk.CTkToplevel):
         )
         self.entry_treatment.pack(pady=(0, 20))
 
+                # Enter в полях — сохранить
+        for entry in (self.entry_start, self.entry_end, self.entry_treatment):
+            entry.bind("<Return>", lambda e: self._save())
+
         # Кнопки
         buttons_frame = ctk.CTkFrame(card, fg_color="transparent")
         buttons_frame.pack(pady=(5, 20))
