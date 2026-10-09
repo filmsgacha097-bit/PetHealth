@@ -10,7 +10,9 @@ PetHealthApp и переключается через него.
 
 import customtkinter as ctk
 from tkinter import messagebox
+
 from ui.lottie_label import LottieLabel
+from ui.icons import create_logo
 
 
 # Учебные учётные данные (демонстрация авторизации)
@@ -45,22 +47,24 @@ class LoginFrame(ctk.CTkFrame):
         # Карточка по центру
         card = ctk.CTkFrame(
             self, fg_color="#FFFFFF", corner_radius=24,
-            width=440, height=520
-        )   
+            width=440, height=620
+        )
         card.place(relx=0.5, rely=0.5, anchor="center")
         card.pack_propagate(False)
 
-        # Заголовок
-        from ui.icons import create_logo
-        create_logo(card, "PetHealth", size=36,
-        text_color="#FEB2B1", font_size=32).pack(pady=(40, 5))
+        # Логотип
+        create_logo(
+            card, "PetHealth", size=36,
+            text_color="#FEB2B1", font_size=32
+        ).pack(pady=(30, 5))
 
+        # Подзаголовок
         ctk.CTkLabel(
             card, text="Войдите в свой аккаунт",
             font=("Nunito", 14), text_color="#8A8A8A"
         ).pack(pady=(0, 10))
 
-                # Lottie-анимация
+        # Lottie-анимация
         try:
             lottie = LottieLabel(
                 card, "assets/pet_animation.json",
@@ -111,7 +115,7 @@ class LoginFrame(ctk.CTkFrame):
             card, text="Нет аккаунта? Зарегистрироваться",
             font=("Nunito", 12), text_color="#BBE6FA", cursor="hand2"
         )
-        self.link_register.pack(pady=(0, 30))
+        self.link_register.pack(pady=(0, 20))
         self.link_register.bind(
             "<Button-1>",
             lambda e: self.master.show_register()

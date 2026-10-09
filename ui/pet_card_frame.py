@@ -20,6 +20,8 @@ from ui.add_disease_dialog import AddDiseaseDialog
 from ui.icons import get_species_icon
 from utils.print_pet import generate_pet_pdf
 
+from ui.edit_pet_dialog import EditPetDialog
+
 
 class PetCardFrame(ctk.CTkFrame):
     """Экран карточки питомца.
@@ -118,9 +120,16 @@ class PetCardFrame(ctk.CTkFrame):
             wraplength=340, justify="center"
         ).pack(pady=(0, 20))
 
-                # Кнопки внизу левой колонки
+                        # Кнопки внизу левой колонки
         buttons_frame = ctk.CTkFrame(left, fg_color="transparent")
         buttons_frame.pack(pady=(0, 20))
+
+        ctk.CTkButton(
+            buttons_frame, text="Редактировать",
+            fg_color="#BBE6FA", hover_color="#A0D8F0",
+            text_color="#333333", font=("Nunito", 12, "bold"),
+            width=180, height=40, command=self._edit_pet
+        ).pack(pady=(0, 8))
 
         ctk.CTkButton(
             buttons_frame, text="Распечатать",
@@ -268,6 +277,18 @@ class PetCardFrame(ctk.CTkFrame):
             self, self.db, self.pet_id,
             on_save=self._refresh
         )
+
+    def _edit_pet(self) -> None:
+        """Открывает диалог редактирования питомца."""
+        pets = self.db.get_all_pets()
+        pet = None
+        for p in pets:
+            if p[0] == self.pet_id:
+                pet = p
+                break
+        if pet is None:
+            return
+        EditPetDialog(self, self.db, pet, on_save=self._refresh)
 
     def _delete_pet(self) -> None:
         """Удаляет питомца после подтверждения и возвращает на главный экран."""
