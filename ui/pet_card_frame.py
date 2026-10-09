@@ -7,12 +7,18 @@
 Это фрейм (CTkFrame), который встраивается в главное окно
 PetHealthApp и переключается через него.
 """
+import os
+import sys
+import subprocess
 
 import customtkinter as ctk
 from tkinter import messagebox
 
 from ui.add_record_dialog import AddRecordDialog
 from ui.add_disease_dialog import AddDiseaseDialog
+
+from ui.icons import get_species_icon
+from utils.print_pet import generate_pet_pdf
 
 
 class PetCardFrame(ctk.CTkFrame):
@@ -83,11 +89,12 @@ class PetCardFrame(ctk.CTkFrame):
         left.pack(side="left", fill="y", padx=(0, 10))
         left.pack_propagate(False)
 
-        emoji = "🐱" if species == "Кошка" else "🐶" if species == "Собака" else "🐹"
+        icon = get_species_icon(species, size=128)
 
         ctk.CTkLabel(
-            left, text=emoji, font=("Nunito", 72),
-            width=160, height=160, fg_color="#BBE6FA", corner_radius=24
+            left, text="",
+            width=160, height=160, fg_color="#BBE6FA",
+            corner_radius=24, image=icon
         ).pack(pady=(30, 15))
 
         ctk.CTkLabel(
@@ -111,12 +118,23 @@ class PetCardFrame(ctk.CTkFrame):
             wraplength=340, justify="center"
         ).pack(pady=(0, 20))
 
+                # Кнопки внизу левой колонки
+        buttons_frame = ctk.CTkFrame(left, fg_color="transparent")
+        buttons_frame.pack(pady=(0, 20))
+
         ctk.CTkButton(
-            left, text="Удалить питомца",
+            buttons_frame, text="Распечатать",
+            fg_color="#FFEF77", hover_color="#FFE055",
+            text_color="#333333", font=("Nunito", 12, "bold"),
+            width=180, height=40, command=self._print_pet
+        ).pack(pady=(0, 8))
+
+        ctk.CTkButton(
+            buttons_frame, text="Удалить питомца",
             fg_color="#FEB2B1", hover_color="#FFB1CB",
             text_color="#FFFFFF", font=("Nunito", 12, "bold"),
-            width=200, height=40, command=self._delete_pet
-        ).pack(pady=(0, 20))
+            width=180, height=40, command=self._delete_pet
+        ).pack()
 
         # ===== Правая колонка — записи и болезни =====
         right = ctk.CTkFrame(content, fg_color="transparent")
@@ -256,3 +274,27 @@ class PetCardFrame(ctk.CTkFrame):
         if messagebox.askyesno("Подтверждение", "Удалить питомца?"):
             self.db.delete_pet(self.pet_id)
             self.on_back()
+    
+    def _print_pet(self) -> None:
+        """Создаёт PDF-отчёт о питомце и открывает его."""
+        try:
+            path = generate_pet_pdf(self.db, self.pet_id)
+            messagebox.showinfo(
+                "Готово",
+                f"PDF-отчёт сохранён:\n{path}"
+            )
+            # Пытаемся открыть PDF системным просмотрщиком
+            try:
+                if os.name == "nt":  # Windows
+                    os.startfile(path)
+                elif sys.platform == "darwin":  # macOS
+                    subprocess.run(["open", path], check=False)
+                else:  # Linux
+                    subprocess.run(["xdg-open", path], check=False)
+            except Exception:
+                pass  # Если не удалось открыть — не критично
+        except Exception as e:
+            messagebox.showerror(
+                "Ошибка",
+                f"Не удалось создать PDF:\n{e}"
+            )

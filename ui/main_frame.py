@@ -9,6 +9,7 @@ PetHealthApp и переключается через него.
 
 import customtkinter as ctk
 from tkinter import messagebox
+from ui.icons import get_species_icon
 
 
 class MainFrame(ctk.CTkFrame):
@@ -47,10 +48,9 @@ class MainFrame(ctk.CTkFrame):
         header.pack_propagate(False)
 
         # Логотип
-        logo = ctk.CTkLabel(
-            header, text="🐾 PetHealth",
-            font=("Nunito", 24, "bold"), text_color="#FEB2B1"
-        )
+        from ui.icons import create_logo
+        logo = create_logo(header, "PetHealth", size=28,
+        text_color="#FEB2B1", font_size=24)
         logo.pack(side="left", padx=20)
 
         # Кнопка "Выход"
@@ -138,11 +138,11 @@ class MainFrame(ctk.CTkFrame):
         card.pack(fill="x", pady=8, padx=5)
         card.pack_propagate(False)
 
-        emoji = "🐱" if species == "Кошка" else "🐶" if species == "Собака" else "🐹"
+        icon = get_species_icon(species, size=64)
         avatar = ctk.CTkLabel(
-            card, text=emoji, font=("Nunito", 36),
+            card, text="",
             width=80, height=80, fg_color="#BBE6FA",
-            corner_radius=16
+            corner_radius=16, image=icon
         )
         avatar.pack(side="left", padx=15, pady=10)
 

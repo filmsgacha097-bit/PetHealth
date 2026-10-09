@@ -44,10 +44,9 @@ class RegisterFrame(ctk.CTkFrame):
         card.pack_propagate(False)
 
         # Заголовок
-        ctk.CTkLabel(
-            card, text="🐾 PetHealth",
-            font=("Nunito", 32, "bold"), text_color="#FEB2B1"
-        ).pack(pady=(30, 5))
+        from ui.icons import create_logo
+        create_logo(card, "PetHealth", size=36,
+        text_color="#FEB2B1", font_size=32).pack(pady=(30, 5))
 
         ctk.CTkLabel(
             card, text="Создайте новый аккаунт",
