@@ -68,18 +68,20 @@ def test_add_record(db):
 
 def test_add_disease(db):
     """Тест: добавление заболевания в справочник."""
-    disease_id = db.add_disease("Отит", "Воспаление уха", "Кошка")
-    assert disease_id == 1
+    # Автозаполнение уже добавило 5 болезней, добавляем шестую
+    disease_id = db.add_disease("Лишай", "Грибковое заболевание", "Кошка")
+    assert disease_id is not None
 
     diseases = db.get_diseases()
-    assert len(diseases) == 1
-    assert diseases[0][1] == "Отит"
+    assert len(diseases) == 6
+    assert any(d[1] == "Лишай" for d in diseases)
 
 
 def test_add_pet_disease(db):
     """Тест: добавление болезни питомцу."""
     pet_id = db.add_pet("Мурка", "Кошка")
-    disease_id = db.add_disease("Отит", "Воспаление уха", "Кошка")
+    # Используем болезнь из автозаполнения
+    disease_id = db.get_diseases()[0][0]
     db.add_pet_disease(pet_id, disease_id, "01.09.2026",
                        status="вылечено", treatment="Капли")
 
