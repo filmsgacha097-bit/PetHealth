@@ -45,7 +45,7 @@ class RemindersFrame(ctk.CTkFrame):
         ).pack(side="left")
 
         ctk.CTkLabel(
-            self, text="🔔 Все напоминания",
+            self, text="Все напоминания",
             font=("Nunito", 24, "bold"), text_color="#333333"
         ).pack(pady=(10, 5))
 
@@ -87,14 +87,6 @@ class RemindersFrame(ctk.CTkFrame):
         """
         pet_name, pet_species, record_type, next_date, value = reminder
 
-        emoji_map = {
-            "vaccine": "💉",
-            "parasite": "💊",
-            "weight": "⚖️",
-            "note": "📝",
-        }
-        emoji = emoji_map.get(record_type, "📌")
-
         type_ru = {
             "vaccine": "Вакцинация",
             "parasite": "Обработка",
@@ -109,9 +101,9 @@ class RemindersFrame(ctk.CTkFrame):
         )
         card.pack(fill="x", pady=8, padx=5)
 
-        # Левая часть — эмодзи
+        # Левая часть — цветной квадрат (без эмодзи)
         ctk.CTkLabel(
-            card, text=emoji, font=("Nunito", 32),
+            card, text="", font=("Nunito", 32),
             width=70, height=70, fg_color="#FFEF77",
             corner_radius=16
         ).pack(side="left", padx=15, pady=15)
@@ -132,6 +124,6 @@ class RemindersFrame(ctk.CTkFrame):
 
         # Правая часть — дата
         ctk.CTkLabel(
-            card, text=f"📅 {next_date}",
+            card, text=f"{next_date}",
             font=("Nunito", 14, "bold"), text_color="#FEB2B1"
         ).pack(side="right", padx=20)

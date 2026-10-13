@@ -69,6 +69,11 @@ class PetHealthApp(ctk.CTk):
         from ui.register_frame import RegisterFrame
         self.show_frame(RegisterFrame, on_back=self.show_login)
 
+    def show_reset_password(self) -> None:
+        """Показывает экран восстановления пароля."""
+        from ui.reset_password_frame import ResetPasswordFrame
+        self.show_frame(ResetPasswordFrame, on_back=self.show_login)
+
     def show_main(self) -> None:
         """Показывает главный экран со списком питомцев."""
         from ui.main_frame import MainFrame

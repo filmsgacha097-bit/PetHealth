@@ -133,7 +133,7 @@ class CatalogFrame(ctk.CTkFrame):
         info_frame.pack(fill="x", padx=20, pady=(15, 5))
 
         ctk.CTkLabel(
-            info_frame, text=f"🩺 {name}",
+            info_frame, text=f"{name}",
             font=("Nunito", 16, "bold"), text_color="#333333"
         ).pack(anchor="w")
 

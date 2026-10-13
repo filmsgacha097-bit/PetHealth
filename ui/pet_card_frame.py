@@ -222,16 +222,17 @@ class PetCardFrame(ctk.CTkFrame):
         row.pack(fill="x", padx=20, pady=4)
         row.pack_propagate(False)
 
-        emoji_map = {
-            "vaccine": "💉",
-            "parasite": "💊",
-            "weight": "⚖️",
-            "note": "📝",
+        # Русские названия типов записей
+        type_ru = {
+            "vaccine": "Вакцинация",
+            "parasite": "Обработка",
+            "weight": "Взвешивание",
+            "note": "Заметка",
         }
-        emoji = emoji_map.get(rec_type, "📌")
+        type_label = type_ru.get(rec_type, rec_type)
 
         ctk.CTkLabel(
-            row, text=f"{emoji} {rec_type}: {value or '—'} — {date}",
+            row, text=f"{type_label}: {value or '—'} — {date}",
             font=("Nunito", 13), text_color="#333333"
         ).pack(side="left", padx=15)
 
@@ -249,7 +250,7 @@ class PetCardFrame(ctk.CTkFrame):
         row.pack_propagate(False)
 
         ctk.CTkLabel(
-            row, text=f"🩺 Болезнь #{disease_id} — {date_start} — {status}",
+            row, text=f"Болезнь #{disease_id} — {date_start} — {status}",
             font=("Nunito", 13), text_color="#333333"
         ).pack(side="left", padx=15)
 
