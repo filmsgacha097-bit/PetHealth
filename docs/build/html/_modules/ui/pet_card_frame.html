@@ -1,0 +1,431 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ui.pet_card_frame &mdash; документация PetHealth 1.0</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=9ca2116e"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/translations.js?v=9bfe3ffa"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="../../genindex.html" />
+    <link rel="search" title="Поиск" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            PetHealth
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Содержание:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../architecture.html">Архитектура приложения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../functionality.html">Функциональность приложения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_manual.html">Руководство пользователя</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer_manual.html">Руководство разработчика</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Внутренний API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PetHealth</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Код модуля</a></li>
+      <li class="breadcrumb-item active">ui.pet_card_frame</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Исходный код ui.pet_card_frame</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Экран карточки питомца.</span>
+
+<span class="sd">Содержит класс PetCardFrame — экран с подробной информацией</span>
+<span class="sd">о питомце: фото, кличка, вид, дата рождения, записи о здоровье,</span>
+<span class="sd">история болезней.</span>
+
+<span class="sd">Это фрейм (CTkFrame), который встраивается в главное окно</span>
+<span class="sd">PetHealthApp и переключается через него.</span>
+<span class="sd">"""</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">customtkinter</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ctk</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tkinter</span><span class="w"> </span><span class="kn">import</span> <span class="n">messagebox</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ui.add_record_dialog</span><span class="w"> </span><span class="kn">import</span> <span class="n">AddRecordDialog</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ui.add_disease_dialog</span><span class="w"> </span><span class="kn">import</span> <span class="n">AddDiseaseDialog</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ui.icons</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_species_icon</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">utils.print_pet</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_pet_pdf</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ui.edit_pet_dialog</span><span class="w"> </span><span class="kn">import</span> <span class="n">EditPetDialog</span>
+
+
+<div class="viewcode-block" id="PetCardFrame">
+<a class="viewcode-back" href="../../api.html#ui.pet_card_frame.PetCardFrame">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PetCardFrame</span><span class="p">(</span><span class="n">ctk</span><span class="o">.</span><span class="n">CTkFrame</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Экран карточки питомца.</span>
+
+<span class="sd">    Отображает информацию о питомце и предоставляет доступ</span>
+<span class="sd">    к записям о здоровье и истории болезней.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        db (DatabaseManager): Менеджер базы данных.</span>
+<span class="sd">        pet_id (int): ID питомца.</span>
+<span class="sd">        on_back (callable): Функция возврата на главный экран.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">master</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">pet_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">on_back</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Инициализация экрана карточки питомца.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            master: Родительское окно (PetHealthApp).</span>
+<span class="sd">            db (DatabaseManager): Менеджер базы данных.</span>
+<span class="sd">            pet_id (int): ID питомца.</span>
+<span class="sd">            on_back (callable): Функция возврата на главный экран.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">master</span><span class="p">,</span> <span class="n">fg_color</span><span class="o">=</span><span class="s2">"#F7F4EB"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">db</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pet_id</span> <span class="o">=</span> <span class="n">pet_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_back</span> <span class="o">=</span> <span class="n">on_back</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_build_ui</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_ui</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Строит интерфейс карточки питомца."""</span>
+        <span class="n">pets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">get_all_pets</span><span class="p">()</span>
+        <span class="n">pet</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pets</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">pet_id</span><span class="p">:</span>
+                <span class="n">pet</span> <span class="o">=</span> <span class="n">p</span>
+                <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">pet</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ctk</span><span class="o">.</span><span class="n">CTkLabel</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">"Питомец не найден"</span><span class="p">,</span>
+                <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">"Nunito"</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="n">text_color</span><span class="o">=</span><span class="s2">"#333333"</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">pady</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">pet_id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">birth_date</span><span class="p">,</span> <span class="n">photo_path</span><span class="p">,</span> <span class="n">notes</span> <span class="o">=</span> <span class="n">pet</span>
+
+        <span class="c1"># Верхняя панель с кнопкой "Назад"</span>
+        <span class="n">top_bar</span> <span class="o">=</span> <span class="n">ctk</span><span class="o">.</span><span class="n">CTkFrame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fg_color</span><span class="o">=</span><span class="s2">"transparent"</span><span class="p">)</span>
+        <span class="n">top_bar</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span> <span class="n">padx</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">pady</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+        <span class="n">ctk</span><span class="o">.</span><span class="n">CTkButton</span><span class="p">(</span>
+            <span class="n">top_bar</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">"← Назад"</span><span class="p">,</span>
+            <span class="n">fg_color</span><span class="o">=</span><span class="s2">"#F7F4EB"</span><span class="p">,</span> <span class="n">border_color</span><span class="o">=</span><span class="s2">"#BBE6FA"</span><span class="p">,</span> <span class="n">border_width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">text_color</span><span class="o">=</span><span class="s2">"#333333"</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">"Nunito"</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">"bold"</span><span class="p">),</span>
+            <span class="n">width</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">on_back</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">"left"</span><span class="p">)</span>
+
+        <span class="c1"># Основная область — две колонки</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">ctk</span><span class="o">.</span><span class="n">CTkFrame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fg_color</span><span class="o">=</span><span class="s2">"transparent"</span><span class="p">)</span>
+        <span class="n">content</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="s2">"both"</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padx</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">pady</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+        <span class="c1"># ===== Левая колонка — информация о питомце =====</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="n">ctk</span><span class="o">.</span><span class="n">CTkFrame</span><span class="p">(</span>
+            <span class="n">content</span><span class="p">,</span> <span class="n">fg_color</span><span class="o">=</span><span class="s2">"#FFFFFF"</span><span class="p">,</span> <span class="n">corner_radius</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">380</span>
+        <span class="p">)</span>
+        <span class="n">left</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">"left"</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">"y"</span><span class="p">,</span> <span class="n">padx</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+        <span class="n">left</span><span class="o">.</span><span class="n">pack_propagate</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">icon</span> <span class="o">=</span> <span class="n">get_species_icon</span><span class="p">(</span><span class="n">species</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+
+        <span class="n">ctk</span><span class="o">.</span><span class="n">CTkLabel</span><span class="p">(</span>
+            <span class="n">left</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span>
+            <span class="n">width</span><span class="o">=</span><span class="mi">160</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">160</span><span class="p">,</span> <span class="n">fg_color</span><span class="o">=</span><span class="s2">"#BBE6FA"</span><span class="p">,</span>
+            <span class="n">corner_radius</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span> <span class="n">image</span><span class="o">=</span><span class="n">icon</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">pady</span><span class="o">=</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">15</span><span class="p">))</span>
+
+        <span class="n">ctk</span><span class="o">.</span><span class="n">CTkLabel</span><span class="p">(</span>
+            <span class="n">left</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">"Nunito"</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="s2">"bold"</span><span class="p">),</span> <span class="n">text_color</span><span class="o">=</span><span class="s2">"#333333"</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">()</span>
+
+        <span class="n">ctk</span><span class="o">.</span><span class="n">CTkLabel</span><span class="p">(</span>
+            <span class="n">left</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">species</span><span class="p">,</span>
+            <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">"Nunito"</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span> <span class="n">text_color</span><span class="o">=</span><span class="s2">"#8A8A8A"</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">pady</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">15</span><span class="p">))</span>
+
+        <span class="n">ctk</span><span class="o">.</span><span class="n">CTkLabel</span><span class="p">(</span>
+            <span class="n">left</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Дата рождения: </span><span class="si">{</span><span class="n">birth_date</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s1">'—'</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">"Nunito"</span><span class="p">,</span> <span class="mi">14</span><span class="p">),</span> <span class="n">text_color</span><span class="o">=</span><span class="s2">"#333333"</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">()</span>
+
+        <span class="n">ctk</span><span class="o">.</span><span class="n">CTkLabel</span><span class="p">(</span>
+            <span class="n">left</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Заметки: </span><span class="si">{</span><span class="n">notes</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s1">'—'</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">"Nunito"</span><span class="p">,</span> <span class="mi">14</span><span class="p">),</span> <span class="n">text_color</span><span class="o">=</span><span class="s2">"#8A8A8A"</span><span class="p">,</span>
+            <span class="n">wraplength</span><span class="o">=</span><span class="mi">340</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s2">"center"</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">pady</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+
+                        <span class="c1"># Кнопки внизу левой колонки</span>
+        <span class="n">buttons_frame</span> <span class="o">=</span> <span class="n">ctk</span><span class="o">.</span><span class="n">CTkFrame</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">fg_color</span><span class="o">=</span><span class="s2">"transparent"</span><span class="p">)</span>
+        <span class="n">buttons_frame</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">pady</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+
+        <span class="n">ctk</span><span class="o">.</span><span class="n">CTkButton</span><span class="p">(</span>
+            <span class="n">buttons_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">"Редактировать"</span><span class="p">,</span>
+            <span class="n">fg_color</span><span class="o">=</span><span class="s2">"#BBE6FA"</span><span class="p">,</span> <span class="n">hover_color</span><span class="o">=</span><span class="s2">"#A0D8F0"</span><span class="p">,</span>
+            <span class="n">text_color</span><span class="o">=</span><span class="s2">"#333333"</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">"Nunito"</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">"bold"</span><span class="p">),</span>
+            <span class="n">width</span><span class="o">=</span><span class="mi">180</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_edit_pet</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">pady</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+
+        <span class="n">ctk</span><span class="o">.</span><span class="n">CTkButton</span><span class="p">(</span>
+            <span class="n">buttons_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">"Распечатать"</span><span class="p">,</span>
+            <span class="n">fg_color</span><span class="o">=</span><span class="s2">"#FFEF77"</span><span class="p">,</span> <span class="n">hover_color</span><span class="o">=</span><span class="s2">"#FFE055"</span><span class="p">,</span>
+            <span class="n">text_color</span><span class="o">=</span><span class="s2">"#333333"</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">"Nunito"</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">"bold"</span><span class="p">),</span>
+            <span class="n">width</span><span class="o">=</span><span class="mi">180</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_print_pet</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">pady</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+
+        <span class="n">ctk</span><span class="o">.</span><span class="n">CTkButton</span><span class="p">(</span>
+            <span class="n">buttons_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">"Удалить питомца"</span><span class="p">,</span>
+            <span class="n">fg_color</span><span class="o">=</span><span class="s2">"#FEB2B1"</span><span class="p">,</span> <span class="n">hover_color</span><span class="o">=</span><span class="s2">"#FFB1CB"</span><span class="p">,</span>
+            <span class="n">text_color</span><span class="o">=</span><span class="s2">"#FFFFFF"</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">"Nunito"</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">"bold"</span><span class="p">),</span>
+            <span class="n">width</span><span class="o">=</span><span class="mi">180</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_delete_pet</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">()</span>
+
+        <span class="c1"># ===== Правая колонка — записи и болезни =====</span>
+        <span class="n">right</span> <span class="o">=</span> <span class="n">ctk</span><span class="o">.</span><span class="n">CTkFrame</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">fg_color</span><span class="o">=</span><span class="s2">"transparent"</span><span class="p">)</span>
+        <span class="n">right</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">"left"</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">"both"</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># --- Записи о здоровье ---</span>
+        <span class="n">records_card</span> <span class="o">=</span> <span class="n">ctk</span><span class="o">.</span><span class="n">CTkFrame</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">fg_color</span><span class="o">=</span><span class="s2">"#FFFFFF"</span><span class="p">,</span> <span class="n">corner_radius</span><span class="o">=</span><span class="mi">24</span><span class="p">)</span>
+        <span class="n">records_card</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="s2">"both"</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pady</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+
+        <span class="n">records_header</span> <span class="o">=</span> <span class="n">ctk</span><span class="o">.</span><span class="n">CTkFrame</span><span class="p">(</span><span class="n">records_card</span><span class="p">,</span> <span class="n">fg_color</span><span class="o">=</span><span class="s2">"transparent"</span><span class="p">)</span>
+        <span class="n">records_header</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span> <span class="n">padx</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">pady</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+        <span class="n">ctk</span><span class="o">.</span><span class="n">CTkLabel</span><span class="p">(</span>
+            <span class="n">records_header</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">"Записи о здоровье"</span><span class="p">,</span>
+            <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">"Nunito"</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="s2">"bold"</span><span class="p">),</span> <span class="n">text_color</span><span class="o">=</span><span class="s2">"#333333"</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">"left"</span><span class="p">)</span>
+
+        <span class="n">ctk</span><span class="o">.</span><span class="n">CTkButton</span><span class="p">(</span>
+            <span class="n">records_header</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">"+ Добавить запись"</span><span class="p">,</span>
+            <span class="n">fg_color</span><span class="o">=</span><span class="s2">"#FFEF77"</span><span class="p">,</span> <span class="n">hover_color</span><span class="o">=</span><span class="s2">"#FFE055"</span><span class="p">,</span>
+            <span class="n">text_color</span><span class="o">=</span><span class="s2">"#333333"</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">"Nunito"</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">"bold"</span><span class="p">),</span>
+            <span class="n">width</span><span class="o">=</span><span class="mi">160</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">36</span><span class="p">,</span>
+            <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_open_add_record</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">"right"</span><span class="p">)</span>
+
+        <span class="n">records</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">get_records</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pet_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">records</span><span class="p">:</span>
+            <span class="n">ctk</span><span class="o">.</span><span class="n">CTkLabel</span><span class="p">(</span>
+                <span class="n">records_card</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">"Записей пока нет"</span><span class="p">,</span>
+                <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">"Nunito"</span><span class="p">,</span> <span class="mi">14</span><span class="p">),</span> <span class="n">text_color</span><span class="o">=</span><span class="s2">"#8A8A8A"</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">pady</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">rec</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_create_record_row</span><span class="p">(</span><span class="n">records_card</span><span class="p">,</span> <span class="n">rec</span><span class="p">)</span>
+
+        <span class="c1"># --- История болезней ---</span>
+        <span class="n">diseases_card</span> <span class="o">=</span> <span class="n">ctk</span><span class="o">.</span><span class="n">CTkFrame</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">fg_color</span><span class="o">=</span><span class="s2">"#FFFFFF"</span><span class="p">,</span> <span class="n">corner_radius</span><span class="o">=</span><span class="mi">24</span><span class="p">)</span>
+        <span class="n">diseases_card</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="s2">"both"</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pady</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+        <span class="n">diseases_header</span> <span class="o">=</span> <span class="n">ctk</span><span class="o">.</span><span class="n">CTkFrame</span><span class="p">(</span><span class="n">diseases_card</span><span class="p">,</span> <span class="n">fg_color</span><span class="o">=</span><span class="s2">"transparent"</span><span class="p">)</span>
+        <span class="n">diseases_header</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span> <span class="n">padx</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">pady</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+        <span class="n">ctk</span><span class="o">.</span><span class="n">CTkLabel</span><span class="p">(</span>
+            <span class="n">diseases_header</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">"История болезней"</span><span class="p">,</span>
+            <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">"Nunito"</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="s2">"bold"</span><span class="p">),</span> <span class="n">text_color</span><span class="o">=</span><span class="s2">"#333333"</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">"left"</span><span class="p">)</span>
+
+        <span class="n">ctk</span><span class="o">.</span><span class="n">CTkButton</span><span class="p">(</span>
+            <span class="n">diseases_header</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">"+ Добавить заболевание"</span><span class="p">,</span>
+            <span class="n">fg_color</span><span class="o">=</span><span class="s2">"#FEB2B1"</span><span class="p">,</span> <span class="n">hover_color</span><span class="o">=</span><span class="s2">"#FFB1CB"</span><span class="p">,</span>
+            <span class="n">text_color</span><span class="o">=</span><span class="s2">"#FFFFFF"</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">"Nunito"</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">"bold"</span><span class="p">),</span>
+            <span class="n">width</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">36</span><span class="p">,</span>
+            <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_open_add_disease</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">"right"</span><span class="p">)</span>
+
+        <span class="n">pet_diseases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">get_pet_diseases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pet_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">pet_diseases</span><span class="p">:</span>
+            <span class="n">ctk</span><span class="o">.</span><span class="n">CTkLabel</span><span class="p">(</span>
+                <span class="n">diseases_card</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">"Заболеваний пока нет"</span><span class="p">,</span>
+                <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">"Nunito"</span><span class="p">,</span> <span class="mi">14</span><span class="p">),</span> <span class="n">text_color</span><span class="o">=</span><span class="s2">"#8A8A8A"</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">pady</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">pd</span> <span class="ow">in</span> <span class="n">pet_diseases</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_create_disease_row</span><span class="p">(</span><span class="n">diseases_card</span><span class="p">,</span> <span class="n">pd</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_record_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Создаёт строку с записью о здоровье.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            parent: Родительский фрейм.</span>
+<span class="sd">            record (tuple): Кортеж из БД.</span>
+<span class="sd">        """</span>
+        <span class="n">rec_id</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">rec_type</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">next_date</span> <span class="o">=</span> <span class="n">record</span>
+
+        <span class="n">row</span> <span class="o">=</span> <span class="n">ctk</span><span class="o">.</span><span class="n">CTkFrame</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">fg_color</span><span class="o">=</span><span class="s2">"#F7F4EB"</span><span class="p">,</span> <span class="n">corner_radius</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+        <span class="n">row</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span> <span class="n">padx</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">pady</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="n">row</span><span class="o">.</span><span class="n">pack_propagate</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># Русские названия типов записей</span>
+        <span class="n">type_ru</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"vaccine"</span><span class="p">:</span> <span class="s2">"Вакцинация"</span><span class="p">,</span>
+            <span class="s2">"parasite"</span><span class="p">:</span> <span class="s2">"Обработка"</span><span class="p">,</span>
+            <span class="s2">"weight"</span><span class="p">:</span> <span class="s2">"Взвешивание"</span><span class="p">,</span>
+            <span class="s2">"note"</span><span class="p">:</span> <span class="s2">"Заметка"</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">type_label</span> <span class="o">=</span> <span class="n">type_ru</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">rec_type</span><span class="p">,</span> <span class="n">rec_type</span><span class="p">)</span>
+
+        <span class="n">ctk</span><span class="o">.</span><span class="n">CTkLabel</span><span class="p">(</span>
+            <span class="n">row</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">type_label</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s1">'—'</span><span class="si">}</span><span class="s2"> — </span><span class="si">{</span><span class="n">date</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">"Nunito"</span><span class="p">,</span> <span class="mi">13</span><span class="p">),</span> <span class="n">text_color</span><span class="o">=</span><span class="s2">"#333333"</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">"left"</span><span class="p">,</span> <span class="n">padx</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_disease_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">pd</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Создаёт строку с записью о болезни.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            parent: Родительский фрейм.</span>
+<span class="sd">            pd (tuple): Кортеж из БД.</span>
+<span class="sd">        """</span>
+        <span class="n">pd_id</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">disease_id</span><span class="p">,</span> <span class="n">date_start</span><span class="p">,</span> <span class="n">date_end</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">treatment</span><span class="p">,</span> <span class="n">notes</span> <span class="o">=</span> <span class="n">pd</span>
+
+        <span class="n">row</span> <span class="o">=</span> <span class="n">ctk</span><span class="o">.</span><span class="n">CTkFrame</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">fg_color</span><span class="o">=</span><span class="s2">"#F7F4EB"</span><span class="p">,</span> <span class="n">corner_radius</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+        <span class="n">row</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span> <span class="n">padx</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">pady</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="n">row</span><span class="o">.</span><span class="n">pack_propagate</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">ctk</span><span class="o">.</span><span class="n">CTkLabel</span><span class="p">(</span>
+            <span class="n">row</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Болезнь #</span><span class="si">{</span><span class="n">disease_id</span><span class="si">}</span><span class="s2"> — </span><span class="si">{</span><span class="n">date_start</span><span class="si">}</span><span class="s2"> — </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">"Nunito"</span><span class="p">,</span> <span class="mi">13</span><span class="p">),</span> <span class="n">text_color</span><span class="o">=</span><span class="s2">"#333333"</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">"left"</span><span class="p">,</span> <span class="n">padx</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+
+        <span class="n">ctk</span><span class="o">.</span><span class="n">CTkLabel</span><span class="p">(</span>
+            <span class="n">row</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">treatment</span> <span class="ow">or</span> <span class="s2">"—"</span><span class="p">,</span>
+            <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">"Nunito"</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span> <span class="n">text_color</span><span class="o">=</span><span class="s2">"#8A8A8A"</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">"right"</span><span class="p">,</span> <span class="n">padx</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_open_add_record</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Открывает диалог добавления записи о здоровье."""</span>
+        <span class="n">AddRecordDialog</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pet_id</span><span class="p">,</span>
+            <span class="n">on_save</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_refresh</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Обновляет экран карточки питомца (после изменений)."""</span>
+        <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">winfo_children</span><span class="p">():</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_build_ui</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_open_add_disease</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Открывает диалог добавления заболевания."""</span>
+        <span class="n">AddDiseaseDialog</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pet_id</span><span class="p">,</span>
+            <span class="n">on_save</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_refresh</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_edit_pet</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Открывает диалог редактирования питомца."""</span>
+        <span class="n">pets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">get_all_pets</span><span class="p">()</span>
+        <span class="n">pet</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pets</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">pet_id</span><span class="p">:</span>
+                <span class="n">pet</span> <span class="o">=</span> <span class="n">p</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="n">pet</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">EditPetDialog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">pet</span><span class="p">,</span> <span class="n">on_save</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_refresh</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_delete_pet</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Удаляет питомца после подтверждения и возвращает на главный экран."""</span>
+        <span class="k">if</span> <span class="n">messagebox</span><span class="o">.</span><span class="n">askyesno</span><span class="p">(</span><span class="s2">"Подтверждение"</span><span class="p">,</span> <span class="s2">"Удалить питомца?"</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">delete_pet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pet_id</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">on_back</span><span class="p">()</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_print_pet</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Создаёт PDF-отчёт о питомце и открывает его."""</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">generate_pet_pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pet_id</span><span class="p">)</span>
+            <span class="n">messagebox</span><span class="o">.</span><span class="n">showinfo</span><span class="p">(</span>
+                <span class="s2">"Готово"</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"PDF-отчёт сохранён:</span><span class="se">\n</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+            <span class="c1"># Пытаемся открыть PDF системным просмотрщиком</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">"nt"</span><span class="p">:</span>  <span class="c1"># Windows</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">startfile</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">"darwin"</span><span class="p">:</span>  <span class="c1"># macOS</span>
+                    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">"open"</span><span class="p">,</span> <span class="n">path</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>  <span class="c1"># Linux</span>
+                    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">"xdg-open"</span><span class="p">,</span> <span class="n">path</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">pass</span>  <span class="c1"># Если не удалось открыть — не критично</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">messagebox</span><span class="o">.</span><span class="n">showerror</span><span class="p">(</span>
+                <span class="s2">"Ошибка"</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"Не удалось создать PDF:</span><span class="se">\n</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2026, Макарова Варвара Николаевна. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

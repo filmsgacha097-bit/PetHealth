@@ -1,0 +1,596 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>database_manager &mdash; документация PetHealth 1.0</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=9ca2116e"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=9bfe3ffa"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="../genindex.html" />
+    <link rel="search" title="Поиск" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PetHealth
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Содержание:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">Архитектура приложения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../functionality.html">Функциональность приложения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_manual.html">Руководство пользователя</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_manual.html">Руководство разработчика</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Внутренний API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PetHealth</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Код модуля</a></li>
+      <li class="breadcrumb-item active">database_manager</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Исходный код database_manager</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Модуль работы с базой данных приложения PetHealth.</span>
+
+<span class="sd">Содержит класс DatabaseManager, который отвечает за:</span>
+<span class="sd">- подключение к базе данных SQLite;</span>
+<span class="sd">- создание таблиц при первом запуске;</span>
+<span class="sd">- выполнение CRUD-операций (создание, чтение, обновление, удаление).</span>
+
+<span class="sd">База данных состоит из пяти таблиц:</span>
+<span class="sd">- pets — информация о питомцах;</span>
+<span class="sd">- records — записи о здоровье (вакцинации, обработки, взвешивания);</span>
+<span class="sd">- diseases — справочник заболеваний;</span>
+<span class="sd">- symptoms — справочник симптомов;</span>
+<span class="sd">- pet_diseases — история болезней питомцев.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+
+<div class="viewcode-block" id="DatabaseManager">
+<a class="viewcode-back" href="../api.html#database_manager.DatabaseManager">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatabaseManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Класс для работы с базой данных SQLite.</span>
+
+<span class="sd">    Отвечает за подключение к БД, создание таблиц</span>
+<span class="sd">    и выполнение операций с данными.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        db_name (str): Имя файла базы данных.</span>
+<span class="sd">        connection (sqlite3.Connection): Подключение к БД.</span>
+<span class="sd">        cursor (sqlite3.Cursor): Курсор для выполнения запросов.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"pets.db"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Инициализация менеджера базы данных.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            db_name (str): Имя файла базы данных. По умолчанию "pets.db".</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_name</span> <span class="o">=</span> <span class="n">db_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"PRAGMA foreign_keys = ON;"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_tables</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_seed_initial_data</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Создание таблиц базы данных, если они ещё не существуют."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"""</span>
+<span class="s2">            CREATE TABLE IF NOT EXISTS pets (</span>
+<span class="s2">                id INTEGER PRIMARY KEY AUTOINCREMENT,</span>
+<span class="s2">                name TEXT NOT NULL,</span>
+<span class="s2">                species TEXT NOT NULL,</span>
+<span class="s2">                birth_date TEXT,</span>
+<span class="s2">                photo_path TEXT,</span>
+<span class="s2">                notes TEXT</span>
+<span class="s2">            )</span>
+<span class="s2">        """</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"""</span>
+<span class="s2">            CREATE TABLE IF NOT EXISTS records (</span>
+<span class="s2">                id INTEGER PRIMARY KEY AUTOINCREMENT,</span>
+<span class="s2">                pet_id INTEGER NOT NULL,</span>
+<span class="s2">                record_type TEXT NOT NULL,</span>
+<span class="s2">                date TEXT NOT NULL,</span>
+<span class="s2">                value TEXT,</span>
+<span class="s2">                next_date TEXT,</span>
+<span class="s2">                FOREIGN KEY (pet_id) REFERENCES pets (id) ON DELETE CASCADE</span>
+<span class="s2">            )</span>
+<span class="s2">        """</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"""</span>
+<span class="s2">            CREATE TABLE IF NOT EXISTS diseases (</span>
+<span class="s2">                id INTEGER PRIMARY KEY AUTOINCREMENT,</span>
+<span class="s2">                name TEXT NOT NULL UNIQUE,</span>
+<span class="s2">                description TEXT,</span>
+<span class="s2">                species TEXT</span>
+<span class="s2">            )</span>
+<span class="s2">        """</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"""</span>
+<span class="s2">            CREATE TABLE IF NOT EXISTS symptoms (</span>
+<span class="s2">                id INTEGER PRIMARY KEY AUTOINCREMENT,</span>
+<span class="s2">                disease_id INTEGER NOT NULL,</span>
+<span class="s2">                name TEXT NOT NULL,</span>
+<span class="s2">                FOREIGN KEY (disease_id) REFERENCES diseases (id) ON DELETE CASCADE</span>
+<span class="s2">            )</span>
+<span class="s2">        """</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"""</span>
+<span class="s2">            CREATE TABLE IF NOT EXISTS pet_diseases (</span>
+<span class="s2">                id INTEGER PRIMARY KEY AUTOINCREMENT,</span>
+<span class="s2">                pet_id INTEGER NOT NULL,</span>
+<span class="s2">                disease_id INTEGER NOT NULL,</span>
+<span class="s2">                date_start TEXT NOT NULL,</span>
+<span class="s2">                date_end TEXT,</span>
+<span class="s2">                status TEXT NOT NULL,</span>
+<span class="s2">                treatment TEXT,</span>
+<span class="s2">                notes TEXT,</span>
+<span class="s2">                FOREIGN KEY (pet_id) REFERENCES pets (id) ON DELETE CASCADE,</span>
+<span class="s2">                FOREIGN KEY (disease_id) REFERENCES diseases (id) ON DELETE CASCADE</span>
+<span class="s2">            )</span>
+<span class="s2">        """</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_seed_initial_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Заполняет справочник при первом запуске."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"SELECT COUNT(*) FROM diseases"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">diseases_data</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s2">"Отит"</span><span class="p">,</span> <span class="s2">"Воспаление уха"</span><span class="p">,</span> <span class="s2">"Кошка, Собака"</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"Чума плотоядных"</span><span class="p">,</span> <span class="s2">"Вирусное заболевание"</span><span class="p">,</span> <span class="s2">"Собака"</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"Хламидиоз"</span><span class="p">,</span> <span class="s2">"Инфекционное заболевание"</span><span class="p">,</span> <span class="s2">"Кошка"</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"Ожирение"</span><span class="p">,</span> <span class="s2">"Избыточная масса тела"</span><span class="p">,</span> <span class="s2">"Кошка, Собака, Грызун"</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"Аллергия"</span><span class="p">,</span> <span class="s2">"Реакция на раздражитель"</span><span class="p">,</span> <span class="s2">"Кошка, Собака"</span><span class="p">),</span>
+        <span class="p">]</span>
+        <span class="n">symptoms_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"Отит"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"Зуд в ухе"</span><span class="p">,</span> <span class="s2">"Покраснение"</span><span class="p">,</span> <span class="s2">"Неприятный запах"</span><span class="p">],</span>
+            <span class="s2">"Чума плотоядных"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"Температура"</span><span class="p">,</span> <span class="s2">"Отказ от еды"</span><span class="p">,</span> <span class="s2">"Выделения из глаз"</span><span class="p">],</span>
+            <span class="s2">"Хламидиоз"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"Слезотечение"</span><span class="p">,</span> <span class="s2">"Кашель"</span><span class="p">,</span> <span class="s2">"Отказ от еды"</span><span class="p">],</span>
+            <span class="s2">"Ожирение"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"Избыточный вес"</span><span class="p">,</span> <span class="s2">"Одышка"</span><span class="p">],</span>
+            <span class="s2">"Аллергия"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"Зуд"</span><span class="p">,</span> <span class="s2">"Покраснение кожи"</span><span class="p">,</span> <span class="s2">"Выпадение шерсти"</span><span class="p">],</span>
+        <span class="p">}</span>
+
+        <span class="n">disease_ids</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">species</span> <span class="ow">in</span> <span class="n">diseases_data</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="s2">"INSERT INTO diseases (name, description, species) VALUES (?, ?, ?)"</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">species</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">disease_ids</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">lastrowid</span>
+
+        <span class="k">for</span> <span class="n">disease_name</span><span class="p">,</span> <span class="n">symptoms</span> <span class="ow">in</span> <span class="n">symptoms_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">symptom</span> <span class="ow">in</span> <span class="n">symptoms</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                    <span class="s2">"INSERT INTO symptoms (disease_id, name) VALUES (?, ?)"</span><span class="p">,</span>
+                    <span class="p">(</span><span class="n">disease_ids</span><span class="p">[</span><span class="n">disease_name</span><span class="p">],</span> <span class="n">symptom</span><span class="p">)</span>
+                <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+    <span class="c1"># ========== CRUD для питомцев ==========</span>
+
+<div class="viewcode-block" id="DatabaseManager.add_pet">
+<a class="viewcode-back" href="../api.html#database_manager.DatabaseManager.add_pet">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_pet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">species</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                <span class="n">birth_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">photo_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">notes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Добавляет нового питомца.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): Кличка.</span>
+<span class="sd">            species (str): Вид.</span>
+<span class="sd">            birth_date (Optional[str]): Дата рождения.</span>
+<span class="sd">            photo_path (Optional[str]): Путь к фото.</span>
+<span class="sd">            notes (Optional[str]): Заметки.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: ID добавленного питомца.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="s2">"INSERT INTO pets (name, species, birth_date, photo_path, notes) "</span>
+            <span class="s2">"VALUES (?, ?, ?, ?, ?)"</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">birth_date</span><span class="p">,</span> <span class="n">photo_path</span><span class="p">,</span> <span class="n">notes</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">lastrowid</span></div>
+
+
+<div class="viewcode-block" id="DatabaseManager.get_all_pets">
+<a class="viewcode-back" href="../api.html#database_manager.DatabaseManager.get_all_pets">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_pets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Возвращает список всех питомцев."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"SELECT * FROM pets"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DatabaseManager.update_pet">
+<a class="viewcode-back" href="../api.html#database_manager.DatabaseManager.update_pet">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_pet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pet_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">species</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                   <span class="n">birth_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                   <span class="n">photo_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                   <span class="n">notes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Обновляет данные питомца.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pet_id (int): ID питомца.</span>
+<span class="sd">            name (str): Новая кличка.</span>
+<span class="sd">            species (str): Новый вид.</span>
+<span class="sd">            birth_date (Optional[str]): Новая дата рождения.</span>
+<span class="sd">            photo_path (Optional[str]): Новый путь к фото.</span>
+<span class="sd">            notes (Optional[str]): Новые заметки.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="s2">"UPDATE pets SET name = ?, species = ?, birth_date = ?, "</span>
+            <span class="s2">"photo_path = ?, notes = ? WHERE id = ?"</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">birth_date</span><span class="p">,</span> <span class="n">photo_path</span><span class="p">,</span> <span class="n">notes</span><span class="p">,</span> <span class="n">pet_id</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DatabaseManager.delete_pet">
+<a class="viewcode-back" href="../api.html#database_manager.DatabaseManager.delete_pet">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_pet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pet_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Удаляет питомца по ID.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pet_id (int): ID питомца.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"DELETE FROM pets WHERE id = ?"</span><span class="p">,</span> <span class="p">(</span><span class="n">pet_id</span><span class="p">,))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+
+
+    <span class="c1"># ========== CRUD для записей о здоровье ==========</span>
+
+<div class="viewcode-block" id="DatabaseManager.add_record">
+<a class="viewcode-back" href="../api.html#database_manager.DatabaseManager.add_record">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pet_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">record_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                   <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                   <span class="n">next_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Добавляет запись о здоровье.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pet_id (int): ID питомца.</span>
+<span class="sd">            record_type (str): Тип (vaccine, parasite, weight, note).</span>
+<span class="sd">            date (str): Дата процедуры.</span>
+<span class="sd">            value (Optional[str]): Значение.</span>
+<span class="sd">            next_date (Optional[str]): Дата следующей процедуры.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: ID записи.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="s2">"INSERT INTO records (pet_id, record_type, date, value, next_date) "</span>
+            <span class="s2">"VALUES (?, ?, ?, ?, ?)"</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">pet_id</span><span class="p">,</span> <span class="n">record_type</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">next_date</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">lastrowid</span></div>
+
+
+<div class="viewcode-block" id="DatabaseManager.get_records">
+<a class="viewcode-back" href="../api.html#database_manager.DatabaseManager.get_records">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pet_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Возвращает записи питомца.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pet_id (int): ID питомца.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: Список записей.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"SELECT * FROM records WHERE pet_id = ?"</span><span class="p">,</span> <span class="p">(</span><span class="n">pet_id</span><span class="p">,))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DatabaseManager.update_record">
+<a class="viewcode-back" href="../api.html#database_manager.DatabaseManager.update_record">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">record_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                      <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                      <span class="n">next_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Обновляет запись о здоровье.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            record_id (int): ID записи.</span>
+<span class="sd">            record_type (str): Новый тип.</span>
+<span class="sd">            date (str): Новая дата.</span>
+<span class="sd">            value (Optional[str]): Новое значение.</span>
+<span class="sd">            next_date (Optional[str]): Новая дата следующей процедуры.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="s2">"UPDATE records SET record_type = ?, date = ?, value = ?, "</span>
+            <span class="s2">"next_date = ? WHERE id = ?"</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">record_type</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">next_date</span><span class="p">,</span> <span class="n">record_id</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DatabaseManager.delete_record">
+<a class="viewcode-back" href="../api.html#database_manager.DatabaseManager.delete_record">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Удаляет запись по ID.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            record_id (int): ID записи.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"DELETE FROM records WHERE id = ?"</span><span class="p">,</span> <span class="p">(</span><span class="n">record_id</span><span class="p">,))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+
+
+    <span class="c1"># ========== CRUD для справочника заболеваний ==========</span>
+
+<div class="viewcode-block" id="DatabaseManager.add_disease">
+<a class="viewcode-back" href="../api.html#database_manager.DatabaseManager.add_disease">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_disease</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">species</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Добавляет заболевание в справочник.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): Название.</span>
+<span class="sd">            description (Optional[str]): Описание.</span>
+<span class="sd">            species (Optional[str]): Вид животного.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: ID заболевания.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="s2">"INSERT INTO diseases (name, description, species) VALUES (?, ?, ?)"</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">species</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">lastrowid</span></div>
+
+
+<div class="viewcode-block" id="DatabaseManager.get_diseases">
+<a class="viewcode-back" href="../api.html#database_manager.DatabaseManager.get_diseases">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_diseases</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Возвращает все заболевания из справочника."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"SELECT * FROM diseases"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DatabaseManager.add_symptom">
+<a class="viewcode-back" href="../api.html#database_manager.DatabaseManager.add_symptom">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_symptom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">disease_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Добавляет симптом к заболеванию.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            disease_id (int): ID заболевания.</span>
+<span class="sd">            name (str): Название симптома.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: ID симптома.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="s2">"INSERT INTO symptoms (disease_id, name) VALUES (?, ?)"</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">disease_id</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">lastrowid</span></div>
+
+
+<div class="viewcode-block" id="DatabaseManager.get_symptoms">
+<a class="viewcode-back" href="../api.html#database_manager.DatabaseManager.get_symptoms">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_symptoms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">disease_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Возвращает симптомы заболевания.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            disease_id (int): ID заболевания.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: Список симптомов.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="s2">"SELECT * FROM symptoms WHERE disease_id = ?"</span><span class="p">,</span> <span class="p">(</span><span class="n">disease_id</span><span class="p">,)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span></div>
+
+
+    <span class="c1"># ========== CRUD для медкарты ==========</span>
+
+<div class="viewcode-block" id="DatabaseManager.add_pet_disease">
+<a class="viewcode-back" href="../api.html#database_manager.DatabaseManager.add_pet_disease">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_pet_disease</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pet_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">disease_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">date_start</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                        <span class="n">date_end</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"активно"</span><span class="p">,</span>
+                        <span class="n">treatment</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">notes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Добавляет запись о болезни питомца.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pet_id (int): ID питомца.</span>
+<span class="sd">            disease_id (int): ID заболевания.</span>
+<span class="sd">            date_start (str): Дата начала.</span>
+<span class="sd">            date_end (Optional[str]): Дата окончания.</span>
+<span class="sd">            status (str): Статус.</span>
+<span class="sd">            treatment (Optional[str]): Лечение.</span>
+<span class="sd">            notes (Optional[str]): Заметки.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: ID записи.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="s2">"INSERT INTO pet_diseases "</span>
+            <span class="s2">"(pet_id, disease_id, date_start, date_end, status, treatment, notes) "</span>
+            <span class="s2">"VALUES (?, ?, ?, ?, ?, ?, ?)"</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">pet_id</span><span class="p">,</span> <span class="n">disease_id</span><span class="p">,</span> <span class="n">date_start</span><span class="p">,</span> <span class="n">date_end</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">treatment</span><span class="p">,</span> <span class="n">notes</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">lastrowid</span></div>
+
+
+<div class="viewcode-block" id="DatabaseManager.get_pet_diseases">
+<a class="viewcode-back" href="../api.html#database_manager.DatabaseManager.get_pet_diseases">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_pet_diseases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pet_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Возвращает болезни питомца.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pet_id (int): ID питомца.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: Список записей о болезнях.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"SELECT * FROM pet_diseases WHERE pet_id = ?"</span><span class="p">,</span> <span class="p">(</span><span class="n">pet_id</span><span class="p">,))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DatabaseManager.update_pet_disease">
+<a class="viewcode-back" href="../api.html#database_manager.DatabaseManager.update_pet_disease">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_pet_disease</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">date_start</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                           <span class="n">date_end</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                           <span class="n">status</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"активно"</span><span class="p">,</span>
+                           <span class="n">treatment</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                           <span class="n">notes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Обновляет запись о болезни питомца.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            record_id (int): ID записи.</span>
+<span class="sd">            date_start (str): Новая дата начала.</span>
+<span class="sd">            date_end (Optional[str]): Новая дата окончания.</span>
+<span class="sd">            status (str): Новый статус.</span>
+<span class="sd">            treatment (Optional[str]): Новое лечение.</span>
+<span class="sd">            notes (Optional[str]): Новые заметки.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="s2">"UPDATE pet_diseases SET date_start = ?, date_end = ?, "</span>
+            <span class="s2">"status = ?, treatment = ?, notes = ? WHERE id = ?"</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">date_start</span><span class="p">,</span> <span class="n">date_end</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">treatment</span><span class="p">,</span> <span class="n">notes</span><span class="p">,</span> <span class="n">record_id</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DatabaseManager.delete_pet_disease">
+<a class="viewcode-back" href="../api.html#database_manager.DatabaseManager.delete_pet_disease">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_pet_disease</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Удаляет запись о болезни по ID.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            record_id (int): ID записи.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"DELETE FROM pet_diseases WHERE id = ?"</span><span class="p">,</span> <span class="p">(</span><span class="n">record_id</span><span class="p">,))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DatabaseManager.get_upcoming_procedures">
+<a class="viewcode-back" href="../api.html#database_manager.DatabaseManager.get_upcoming_procedures">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_upcoming_procedures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">days</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">7</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Возвращает записи с предстоящими процедурами.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            days (int): Количество дней вперёд.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: Список записей.</span>
+<span class="sd">        """</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+
+        <span class="n">today</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="n">end_date</span> <span class="o">=</span> <span class="n">today</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"""</span>
+<span class="s2">            SELECT pets.name, pets.species, records.record_type,</span>
+<span class="s2">                   records.next_date, records.value</span>
+<span class="s2">            FROM records</span>
+<span class="s2">            JOIN pets ON records.pet_id = pets.id</span>
+<span class="s2">            WHERE records.next_date IS NOT NULL</span>
+<span class="s2">              AND records.next_date != ''</span>
+<span class="s2">        """</span><span class="p">)</span>
+
+        <span class="n">upcoming</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">next_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="s2">"</span><span class="si">%d</span><span class="s2">.%m.%Y"</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">today</span> <span class="o">&lt;=</span> <span class="n">next_date</span> <span class="o">&lt;=</span> <span class="n">end_date</span><span class="p">:</span>
+                    <span class="n">upcoming</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">continue</span>
+        <span class="k">return</span> <span class="n">upcoming</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Закрывает подключение к базе данных."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<div class="viewcode-block" id="DatabaseManager.close">
+<a class="viewcode-back" href="../api.html#database_manager.DatabaseManager.close">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Закрытие подключения к базе данных."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2026, Макарова Варвара Николаевна. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

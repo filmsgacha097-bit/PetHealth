@@ -1,0 +1,1414 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Внутренний API &mdash; документация PetHealth 1.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=9ca2116e"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/translations.js?v=9bfe3ffa"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="prev" title="Руководство разработчика" href="developer_manual.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            PetHealth
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Содержание:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Архитектура приложения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functionality.html">Функциональность приложения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_manual.html">Руководство пользователя</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_manual.html">Руководство разработчика</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Внутренний API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-database_manager">Модуль работы с базой данных</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#database_manager.DatabaseManager"><code class="docutils literal notranslate"><span class="pre">DatabaseManager</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#database_manager.DatabaseManager.db_name"><code class="docutils literal notranslate"><span class="pre">DatabaseManager.db_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#database_manager.DatabaseManager.connection"><code class="docutils literal notranslate"><span class="pre">DatabaseManager.connection</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#database_manager.DatabaseManager.cursor"><code class="docutils literal notranslate"><span class="pre">DatabaseManager.cursor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#database_manager.DatabaseManager.add_disease"><code class="docutils literal notranslate"><span class="pre">DatabaseManager.add_disease()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#database_manager.DatabaseManager.add_pet"><code class="docutils literal notranslate"><span class="pre">DatabaseManager.add_pet()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#database_manager.DatabaseManager.add_pet_disease"><code class="docutils literal notranslate"><span class="pre">DatabaseManager.add_pet_disease()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#database_manager.DatabaseManager.add_record"><code class="docutils literal notranslate"><span class="pre">DatabaseManager.add_record()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#database_manager.DatabaseManager.add_symptom"><code class="docutils literal notranslate"><span class="pre">DatabaseManager.add_symptom()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#database_manager.DatabaseManager.close"><code class="docutils literal notranslate"><span class="pre">DatabaseManager.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#database_manager.DatabaseManager.delete_pet"><code class="docutils literal notranslate"><span class="pre">DatabaseManager.delete_pet()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#database_manager.DatabaseManager.delete_pet_disease"><code class="docutils literal notranslate"><span class="pre">DatabaseManager.delete_pet_disease()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#database_manager.DatabaseManager.delete_record"><code class="docutils literal notranslate"><span class="pre">DatabaseManager.delete_record()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#database_manager.DatabaseManager.get_all_pets"><code class="docutils literal notranslate"><span class="pre">DatabaseManager.get_all_pets()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#database_manager.DatabaseManager.get_diseases"><code class="docutils literal notranslate"><span class="pre">DatabaseManager.get_diseases()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#database_manager.DatabaseManager.get_pet_diseases"><code class="docutils literal notranslate"><span class="pre">DatabaseManager.get_pet_diseases()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#database_manager.DatabaseManager.get_records"><code class="docutils literal notranslate"><span class="pre">DatabaseManager.get_records()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#database_manager.DatabaseManager.get_symptoms"><code class="docutils literal notranslate"><span class="pre">DatabaseManager.get_symptoms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#database_manager.DatabaseManager.get_upcoming_procedures"><code class="docutils literal notranslate"><span class="pre">DatabaseManager.get_upcoming_procedures()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#database_manager.DatabaseManager.update_pet"><code class="docutils literal notranslate"><span class="pre">DatabaseManager.update_pet()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#database_manager.DatabaseManager.update_pet_disease"><code class="docutils literal notranslate"><span class="pre">DatabaseManager.update_pet_disease()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#database_manager.DatabaseManager.update_record"><code class="docutils literal notranslate"><span class="pre">DatabaseManager.update_record()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-models">Модели данных</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#models.Disease"><code class="docutils literal notranslate"><span class="pre">Disease</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#models.Disease.id"><code class="docutils literal notranslate"><span class="pre">Disease.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.Disease.name"><code class="docutils literal notranslate"><span class="pre">Disease.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.Disease.description"><code class="docutils literal notranslate"><span class="pre">Disease.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.Disease.species"><code class="docutils literal notranslate"><span class="pre">Disease.species</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">Disease.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.Disease.get_info"><code class="docutils literal notranslate"><span class="pre">Disease.get_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">Disease.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">Disease.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">Disease.species</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#models.Pet"><code class="docutils literal notranslate"><span class="pre">Pet</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#models.Pet.id"><code class="docutils literal notranslate"><span class="pre">Pet.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.Pet.name"><code class="docutils literal notranslate"><span class="pre">Pet.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.Pet.species"><code class="docutils literal notranslate"><span class="pre">Pet.species</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.Pet.birth_date"><code class="docutils literal notranslate"><span class="pre">Pet.birth_date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.Pet.photo_path"><code class="docutils literal notranslate"><span class="pre">Pet.photo_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.Pet.notes"><code class="docutils literal notranslate"><span class="pre">Pet.notes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">Pet.birth_date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.Pet.get_info"><code class="docutils literal notranslate"><span class="pre">Pet.get_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7"><code class="docutils literal notranslate"><span class="pre">Pet.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8"><code class="docutils literal notranslate"><span class="pre">Pet.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9"><code class="docutils literal notranslate"><span class="pre">Pet.notes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id10"><code class="docutils literal notranslate"><span class="pre">Pet.photo_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11"><code class="docutils literal notranslate"><span class="pre">Pet.species</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#models.PetDisease"><code class="docutils literal notranslate"><span class="pre">PetDisease</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#models.PetDisease.id"><code class="docutils literal notranslate"><span class="pre">PetDisease.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.PetDisease.pet_id"><code class="docutils literal notranslate"><span class="pre">PetDisease.pet_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.PetDisease.disease_id"><code class="docutils literal notranslate"><span class="pre">PetDisease.disease_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.PetDisease.date_start"><code class="docutils literal notranslate"><span class="pre">PetDisease.date_start</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.PetDisease.date_end"><code class="docutils literal notranslate"><span class="pre">PetDisease.date_end</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.PetDisease.status"><code class="docutils literal notranslate"><span class="pre">PetDisease.status</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.PetDisease.treatment"><code class="docutils literal notranslate"><span class="pre">PetDisease.treatment</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.PetDisease.notes"><code class="docutils literal notranslate"><span class="pre">PetDisease.notes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id12"><code class="docutils literal notranslate"><span class="pre">PetDisease.date_end</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id13"><code class="docutils literal notranslate"><span class="pre">PetDisease.date_start</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id14"><code class="docutils literal notranslate"><span class="pre">PetDisease.disease_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.PetDisease.get_info"><code class="docutils literal notranslate"><span class="pre">PetDisease.get_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.PetDisease.get_status"><code class="docutils literal notranslate"><span class="pre">PetDisease.get_status()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id15"><code class="docutils literal notranslate"><span class="pre">PetDisease.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id16"><code class="docutils literal notranslate"><span class="pre">PetDisease.notes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id17"><code class="docutils literal notranslate"><span class="pre">PetDisease.pet_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id18"><code class="docutils literal notranslate"><span class="pre">PetDisease.status</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id19"><code class="docutils literal notranslate"><span class="pre">PetDisease.treatment</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#models.Record"><code class="docutils literal notranslate"><span class="pre">Record</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#models.Record.id"><code class="docutils literal notranslate"><span class="pre">Record.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.Record.pet_id"><code class="docutils literal notranslate"><span class="pre">Record.pet_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.Record.record_type"><code class="docutils literal notranslate"><span class="pre">Record.record_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.Record.date"><code class="docutils literal notranslate"><span class="pre">Record.date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.Record.value"><code class="docutils literal notranslate"><span class="pre">Record.value</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.Record.next_date"><code class="docutils literal notranslate"><span class="pre">Record.next_date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id20"><code class="docutils literal notranslate"><span class="pre">Record.date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.Record.get_info"><code class="docutils literal notranslate"><span class="pre">Record.get_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id21"><code class="docutils literal notranslate"><span class="pre">Record.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id22"><code class="docutils literal notranslate"><span class="pre">Record.next_date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id23"><code class="docutils literal notranslate"><span class="pre">Record.pet_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id24"><code class="docutils literal notranslate"><span class="pre">Record.record_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id25"><code class="docutils literal notranslate"><span class="pre">Record.value</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ui.app">Интерфейс приложения</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ui.app.PetHealthApp"><code class="docutils literal notranslate"><span class="pre">PetHealthApp</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ui.app.PetHealthApp.db"><code class="docutils literal notranslate"><span class="pre">PetHealthApp.db</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ui.app.PetHealthApp.current_frame"><code class="docutils literal notranslate"><span class="pre">PetHealthApp.current_frame</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ui.app.PetHealthApp.on_close"><code class="docutils literal notranslate"><span class="pre">PetHealthApp.on_close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ui.app.PetHealthApp.show_catalog"><code class="docutils literal notranslate"><span class="pre">PetHealthApp.show_catalog()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ui.app.PetHealthApp.show_frame"><code class="docutils literal notranslate"><span class="pre">PetHealthApp.show_frame()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ui.app.PetHealthApp.show_login"><code class="docutils literal notranslate"><span class="pre">PetHealthApp.show_login()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ui.app.PetHealthApp.show_main"><code class="docutils literal notranslate"><span class="pre">PetHealthApp.show_main()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ui.app.PetHealthApp.show_pet_card"><code class="docutils literal notranslate"><span class="pre">PetHealthApp.show_pet_card()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ui.app.PetHealthApp.show_register"><code class="docutils literal notranslate"><span class="pre">PetHealthApp.show_register()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ui.app.PetHealthApp.show_reminders"><code class="docutils literal notranslate"><span class="pre">PetHealthApp.show_reminders()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ui.app.PetHealthApp.show_reset_password"><code class="docutils literal notranslate"><span class="pre">PetHealthApp.show_reset_password()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ui.main_frame.MainFrame"><code class="docutils literal notranslate"><span class="pre">MainFrame</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ui.main_frame.MainFrame.db"><code class="docutils literal notranslate"><span class="pre">MainFrame.db</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ui.main_frame.MainFrame.on_logout"><code class="docutils literal notranslate"><span class="pre">MainFrame.on_logout</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ui.main_frame.MainFrame.pets_frame"><code class="docutils literal notranslate"><span class="pre">MainFrame.pets_frame</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ui.pet_card_frame.PetCardFrame"><code class="docutils literal notranslate"><span class="pre">PetCardFrame</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ui.pet_card_frame.PetCardFrame.db"><code class="docutils literal notranslate"><span class="pre">PetCardFrame.db</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ui.pet_card_frame.PetCardFrame.pet_id"><code class="docutils literal notranslate"><span class="pre">PetCardFrame.pet_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ui.pet_card_frame.PetCardFrame.on_back"><code class="docutils literal notranslate"><span class="pre">PetCardFrame.on_back</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ui.catalog_frame.CatalogFrame"><code class="docutils literal notranslate"><span class="pre">CatalogFrame</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ui.catalog_frame.CatalogFrame.db"><code class="docutils literal notranslate"><span class="pre">CatalogFrame.db</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ui.catalog_frame.CatalogFrame.on_back"><code class="docutils literal notranslate"><span class="pre">CatalogFrame.on_back</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ui.reminders_frame.RemindersFrame"><code class="docutils literal notranslate"><span class="pre">RemindersFrame</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ui.reminders_frame.RemindersFrame.db"><code class="docutils literal notranslate"><span class="pre">RemindersFrame.db</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ui.reminders_frame.RemindersFrame.on_back"><code class="docutils literal notranslate"><span class="pre">RemindersFrame.on_back</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-utils.print_pet">Утилиты</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#utils.print_pet.PetPDF"><code class="docutils literal notranslate"><span class="pre">PetPDF</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#utils.print_pet.PetPDF.footer"><code class="docutils literal notranslate"><span class="pre">PetPDF.footer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#utils.print_pet.PetPDF.header"><code class="docutils literal notranslate"><span class="pre">PetPDF.header()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.print_pet.generate_pet_pdf"><code class="docutils literal notranslate"><span class="pre">generate_pet_pdf()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PetHealth</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Внутренний API</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/api.rst.txt" rel="nofollow"> Просмотреть исходный код страницы</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="api">
+<h1>Внутренний API<a class="headerlink" href="#api" title="Ссылка на этот заголовок"></a></h1>
+<section id="module-database_manager">
+<span id="id1"></span><h2>Модуль работы с базой данных<a class="headerlink" href="#module-database_manager" title="Ссылка на этот заголовок"></a></h2>
+<p>Модуль работы с базой данных приложения PetHealth.</p>
+<p>Содержит класс DatabaseManager, который отвечает за:
+- подключение к базе данных SQLite;
+- создание таблиц при первом запуске;
+- выполнение CRUD-операций (создание, чтение, обновление, удаление).</p>
+<p>База данных состоит из пяти таблиц:
+- pets — информация о питомцах;
+- records — записи о здоровье (вакцинации, обработки, взвешивания);
+- diseases — справочник заболеваний;
+- symptoms — справочник симптомов;
+- pet_diseases — история болезней питомцев.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="database_manager.DatabaseManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">database_manager.</span></span><span class="sig-name descname"><span class="pre">DatabaseManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pets.db'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/database_manager.html#DatabaseManager"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#database_manager.DatabaseManager" title="Link to this definition"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Класс для работы с базой данных SQLite.</p>
+<p>Отвечает за подключение к БД, создание таблиц
+и выполнение операций с данными.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="database_manager.DatabaseManager.db_name">
+<span class="sig-name descname"><span class="pre">db_name</span></span><a class="headerlink" href="#database_manager.DatabaseManager.db_name" title="Link to this definition"></a></dt>
+<dd><p>Имя файла базы данных.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="database_manager.DatabaseManager.connection">
+<span class="sig-name descname"><span class="pre">connection</span></span><a class="headerlink" href="#database_manager.DatabaseManager.connection" title="Link to this definition"></a></dt>
+<dd><p>Подключение к БД.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>sqlite3.Connection</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="database_manager.DatabaseManager.cursor">
+<span class="sig-name descname"><span class="pre">cursor</span></span><a class="headerlink" href="#database_manager.DatabaseManager.cursor" title="Link to this definition"></a></dt>
+<dd><p>Курсор для выполнения запросов.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>sqlite3.Cursor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="database_manager.DatabaseManager.add_disease">
+<span class="sig-name descname"><span class="pre">add_disease</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/database_manager.html#DatabaseManager.add_disease"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#database_manager.DatabaseManager.add_disease" title="Link to this definition"></a></dt>
+<dd><p>Добавляет заболевание в справочник.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Название.</p></li>
+<li><p><strong>description</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Описание.</p></li>
+<li><p><strong>species</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Вид животного.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>ID заболевания.</p>
+</dd>
+<dt class="field-odd">Тип результата<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="database_manager.DatabaseManager.add_pet">
+<span class="sig-name descname"><span class="pre">add_pet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">birth_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">photo_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/database_manager.html#DatabaseManager.add_pet"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#database_manager.DatabaseManager.add_pet" title="Link to this definition"></a></dt>
+<dd><p>Добавляет нового питомца.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Кличка.</p></li>
+<li><p><strong>species</strong> (<em>str</em>) – Вид.</p></li>
+<li><p><strong>birth_date</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Дата рождения.</p></li>
+<li><p><strong>photo_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Путь к фото.</p></li>
+<li><p><strong>notes</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Заметки.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>ID добавленного питомца.</p>
+</dd>
+<dt class="field-odd">Тип результата<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="database_manager.DatabaseManager.add_pet_disease">
+<span class="sig-name descname"><span class="pre">add_pet_disease</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pet_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disease_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'активно'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">treatment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/database_manager.html#DatabaseManager.add_pet_disease"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#database_manager.DatabaseManager.add_pet_disease" title="Link to this definition"></a></dt>
+<dd><p>Добавляет запись о болезни питомца.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pet_id</strong> (<em>int</em>) – ID питомца.</p></li>
+<li><p><strong>disease_id</strong> (<em>int</em>) – ID заболевания.</p></li>
+<li><p><strong>date_start</strong> (<em>str</em>) – Дата начала.</p></li>
+<li><p><strong>date_end</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Дата окончания.</p></li>
+<li><p><strong>status</strong> (<em>str</em>) – Статус.</p></li>
+<li><p><strong>treatment</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Лечение.</p></li>
+<li><p><strong>notes</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Заметки.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>ID записи.</p>
+</dd>
+<dt class="field-odd">Тип результата<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="database_manager.DatabaseManager.add_record">
+<span class="sig-name descname"><span class="pre">add_record</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pet_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/database_manager.html#DatabaseManager.add_record"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#database_manager.DatabaseManager.add_record" title="Link to this definition"></a></dt>
+<dd><p>Добавляет запись о здоровье.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pet_id</strong> (<em>int</em>) – ID питомца.</p></li>
+<li><p><strong>record_type</strong> (<em>str</em>) – Тип (vaccine, parasite, weight, note).</p></li>
+<li><p><strong>date</strong> (<em>str</em>) – Дата процедуры.</p></li>
+<li><p><strong>value</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Значение.</p></li>
+<li><p><strong>next_date</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Дата следующей процедуры.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>ID записи.</p>
+</dd>
+<dt class="field-odd">Тип результата<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="database_manager.DatabaseManager.add_symptom">
+<span class="sig-name descname"><span class="pre">add_symptom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">disease_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/database_manager.html#DatabaseManager.add_symptom"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#database_manager.DatabaseManager.add_symptom" title="Link to this definition"></a></dt>
+<dd><p>Добавляет симптом к заболеванию.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>disease_id</strong> (<em>int</em>) – ID заболевания.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Название симптома.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>ID симптома.</p>
+</dd>
+<dt class="field-odd">Тип результата<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="database_manager.DatabaseManager.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/database_manager.html#DatabaseManager.close"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#database_manager.DatabaseManager.close" title="Link to this definition"></a></dt>
+<dd><p>Закрытие подключения к базе данных.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="database_manager.DatabaseManager.delete_pet">
+<span class="sig-name descname"><span class="pre">delete_pet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pet_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/database_manager.html#DatabaseManager.delete_pet"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#database_manager.DatabaseManager.delete_pet" title="Link to this definition"></a></dt>
+<dd><p>Удаляет питомца по ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pet_id</strong> (<em>int</em>) – ID питомца.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="database_manager.DatabaseManager.delete_pet_disease">
+<span class="sig-name descname"><span class="pre">delete_pet_disease</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/database_manager.html#DatabaseManager.delete_pet_disease"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#database_manager.DatabaseManager.delete_pet_disease" title="Link to this definition"></a></dt>
+<dd><p>Удаляет запись о болезни по ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>record_id</strong> (<em>int</em>) – ID записи.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="database_manager.DatabaseManager.delete_record">
+<span class="sig-name descname"><span class="pre">delete_record</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/database_manager.html#DatabaseManager.delete_record"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#database_manager.DatabaseManager.delete_record" title="Link to this definition"></a></dt>
+<dd><p>Удаляет запись по ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>record_id</strong> (<em>int</em>) – ID записи.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="database_manager.DatabaseManager.get_all_pets">
+<span class="sig-name descname"><span class="pre">get_all_pets</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/database_manager.html#DatabaseManager.get_all_pets"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#database_manager.DatabaseManager.get_all_pets" title="Link to this definition"></a></dt>
+<dd><p>Возвращает список всех питомцев.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="database_manager.DatabaseManager.get_diseases">
+<span class="sig-name descname"><span class="pre">get_diseases</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/database_manager.html#DatabaseManager.get_diseases"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#database_manager.DatabaseManager.get_diseases" title="Link to this definition"></a></dt>
+<dd><p>Возвращает все заболевания из справочника.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="database_manager.DatabaseManager.get_pet_diseases">
+<span class="sig-name descname"><span class="pre">get_pet_diseases</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pet_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/database_manager.html#DatabaseManager.get_pet_diseases"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#database_manager.DatabaseManager.get_pet_diseases" title="Link to this definition"></a></dt>
+<dd><p>Возвращает болезни питомца.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pet_id</strong> (<em>int</em>) – ID питомца.</p>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>Список записей о болезнях.</p>
+</dd>
+<dt class="field-odd">Тип результата<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="database_manager.DatabaseManager.get_records">
+<span class="sig-name descname"><span class="pre">get_records</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pet_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/database_manager.html#DatabaseManager.get_records"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#database_manager.DatabaseManager.get_records" title="Link to this definition"></a></dt>
+<dd><p>Возвращает записи питомца.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pet_id</strong> (<em>int</em>) – ID питомца.</p>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>Список записей.</p>
+</dd>
+<dt class="field-odd">Тип результата<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="database_manager.DatabaseManager.get_symptoms">
+<span class="sig-name descname"><span class="pre">get_symptoms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">disease_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/database_manager.html#DatabaseManager.get_symptoms"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#database_manager.DatabaseManager.get_symptoms" title="Link to this definition"></a></dt>
+<dd><p>Возвращает симптомы заболевания.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>disease_id</strong> (<em>int</em>) – ID заболевания.</p>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>Список симптомов.</p>
+</dd>
+<dt class="field-odd">Тип результата<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="database_manager.DatabaseManager.get_upcoming_procedures">
+<span class="sig-name descname"><span class="pre">get_upcoming_procedures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">7</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/database_manager.html#DatabaseManager.get_upcoming_procedures"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#database_manager.DatabaseManager.get_upcoming_procedures" title="Link to this definition"></a></dt>
+<dd><p>Возвращает записи с предстоящими процедурами.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>days</strong> (<em>int</em>) – Количество дней вперёд.</p>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>Список записей.</p>
+</dd>
+<dt class="field-odd">Тип результата<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="database_manager.DatabaseManager.update_pet">
+<span class="sig-name descname"><span class="pre">update_pet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pet_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">birth_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">photo_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/database_manager.html#DatabaseManager.update_pet"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#database_manager.DatabaseManager.update_pet" title="Link to this definition"></a></dt>
+<dd><p>Обновляет данные питомца.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pet_id</strong> (<em>int</em>) – ID питомца.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Новая кличка.</p></li>
+<li><p><strong>species</strong> (<em>str</em>) – Новый вид.</p></li>
+<li><p><strong>birth_date</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Новая дата рождения.</p></li>
+<li><p><strong>photo_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Новый путь к фото.</p></li>
+<li><p><strong>notes</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Новые заметки.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="database_manager.DatabaseManager.update_pet_disease">
+<span class="sig-name descname"><span class="pre">update_pet_disease</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'активно'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">treatment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/database_manager.html#DatabaseManager.update_pet_disease"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#database_manager.DatabaseManager.update_pet_disease" title="Link to this definition"></a></dt>
+<dd><p>Обновляет запись о болезни питомца.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>record_id</strong> (<em>int</em>) – ID записи.</p></li>
+<li><p><strong>date_start</strong> (<em>str</em>) – Новая дата начала.</p></li>
+<li><p><strong>date_end</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Новая дата окончания.</p></li>
+<li><p><strong>status</strong> (<em>str</em>) – Новый статус.</p></li>
+<li><p><strong>treatment</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Новое лечение.</p></li>
+<li><p><strong>notes</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Новые заметки.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="database_manager.DatabaseManager.update_record">
+<span class="sig-name descname"><span class="pre">update_record</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/database_manager.html#DatabaseManager.update_record"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#database_manager.DatabaseManager.update_record" title="Link to this definition"></a></dt>
+<dd><p>Обновляет запись о здоровье.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>record_id</strong> (<em>int</em>) – ID записи.</p></li>
+<li><p><strong>record_type</strong> (<em>str</em>) – Новый тип.</p></li>
+<li><p><strong>date</strong> (<em>str</em>) – Новая дата.</p></li>
+<li><p><strong>value</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Новое значение.</p></li>
+<li><p><strong>next_date</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Новая дата следующей процедуры.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-models">
+<span id="id2"></span><h2>Модели данных<a class="headerlink" href="#module-models" title="Ссылка на этот заголовок"></a></h2>
+<p>Модели данных приложения PetHealth.</p>
+<p>Содержит четыре класса-модели:
+- Pet — информация о питомце;
+- Record — запись о здоровье (вакцинация, обработка, взвешивание, заметка);
+- Disease — заболевание из справочника;
+- PetDisease — запись о болезни питомца (медкарта).</p>
+<p>Каждый класс имеет метод get_info(), возвращающий строковое описание объекта.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="models.Disease">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">models.</span></span><span class="sig-name descname"><span class="pre">Disease</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models.html#Disease"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#models.Disease" title="Link to this definition"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Модель заболевания из справочника.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.Disease.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#models.Disease.id" title="Link to this definition"></a></dt>
+<dd><p>Уникальный идентификатор заболевания.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.Disease.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#models.Disease.name" title="Link to this definition"></a></dt>
+<dd><p>Название заболевания.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.Disease.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#models.Disease.description" title="Link to this definition"></a></dt>
+<dd><p>Краткое описание.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.Disease.species">
+<span class="sig-name descname"><span class="pre">species</span></span><a class="headerlink" href="#models.Disease.species" title="Link to this definition"></a></dt>
+<dd><p>Для какого вида животного характерно.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.Disease.get_info">
+<span class="sig-name descname"><span class="pre">get_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/models.html#Disease.get_info"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#models.Disease.get_info" title="Link to this definition"></a></dt>
+<dd><p>Возвращает краткое описание заболевания.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Название заболевания.</p>
+</dd>
+<dt class="field-even">Тип результата<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">species</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="models.Pet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">models.</span></span><span class="sig-name descname"><span class="pre">Pet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">birth_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">photo_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models.html#Pet"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#models.Pet" title="Link to this definition"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Модель питомца.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.Pet.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#models.Pet.id" title="Link to this definition"></a></dt>
+<dd><p>Уникальный идентификатор питомца.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.Pet.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#models.Pet.name" title="Link to this definition"></a></dt>
+<dd><p>Кличка питомца.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.Pet.species">
+<span class="sig-name descname"><span class="pre">species</span></span><a class="headerlink" href="#models.Pet.species" title="Link to this definition"></a></dt>
+<dd><p>Вид животного (кошка, собака, попугай, грызун, другое).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.Pet.birth_date">
+<span class="sig-name descname"><span class="pre">birth_date</span></span><a class="headerlink" href="#models.Pet.birth_date" title="Link to this definition"></a></dt>
+<dd><p>Дата рождения в формате ДД.ММ.ГГГГ.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.Pet.photo_path">
+<span class="sig-name descname"><span class="pre">photo_path</span></span><a class="headerlink" href="#models.Pet.photo_path" title="Link to this definition"></a></dt>
+<dd><p>Путь к файлу фотографии питомца.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.Pet.notes">
+<span class="sig-name descname"><span class="pre">notes</span></span><a class="headerlink" href="#models.Pet.notes" title="Link to this definition"></a></dt>
+<dd><p>Дополнительные заметки.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">birth_date</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.Pet.get_info">
+<span class="sig-name descname"><span class="pre">get_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/models.html#Pet.get_info"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#models.Pet.get_info" title="Link to this definition"></a></dt>
+<dd><p>Возвращает краткое описание питомца.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Строка вида «Мурка (Кошка)».</p>
+</dd>
+<dt class="field-even">Тип результата<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id7" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#id8" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">notes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id9" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id10">
+<span class="sig-name descname"><span class="pre">photo_path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id10" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id11">
+<span class="sig-name descname"><span class="pre">species</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#id11" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="models.PetDisease">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">models.</span></span><span class="sig-name descname"><span class="pre">PetDisease</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pet_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disease_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'активно'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">treatment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models.html#PetDisease"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#models.PetDisease" title="Link to this definition"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Модель записи о болезни питомца (медкарта).</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.PetDisease.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#models.PetDisease.id" title="Link to this definition"></a></dt>
+<dd><p>Уникальный идентификатор записи.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.PetDisease.pet_id">
+<span class="sig-name descname"><span class="pre">pet_id</span></span><a class="headerlink" href="#models.PetDisease.pet_id" title="Link to this definition"></a></dt>
+<dd><p>Идентификатор питомца.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.PetDisease.disease_id">
+<span class="sig-name descname"><span class="pre">disease_id</span></span><a class="headerlink" href="#models.PetDisease.disease_id" title="Link to this definition"></a></dt>
+<dd><p>Идентификатор заболевания из справочника.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.PetDisease.date_start">
+<span class="sig-name descname"><span class="pre">date_start</span></span><a class="headerlink" href="#models.PetDisease.date_start" title="Link to this definition"></a></dt>
+<dd><p>Дата начала заболевания.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.PetDisease.date_end">
+<span class="sig-name descname"><span class="pre">date_end</span></span><a class="headerlink" href="#models.PetDisease.date_end" title="Link to this definition"></a></dt>
+<dd><p>Дата окончания заболевания.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.PetDisease.status">
+<span class="sig-name descname"><span class="pre">status</span></span><a class="headerlink" href="#models.PetDisease.status" title="Link to this definition"></a></dt>
+<dd><p>Статус: «активно», «вылечено», «хроническое».</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.PetDisease.treatment">
+<span class="sig-name descname"><span class="pre">treatment</span></span><a class="headerlink" href="#models.PetDisease.treatment" title="Link to this definition"></a></dt>
+<dd><p>Назначенное лечение.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.PetDisease.notes">
+<span class="sig-name descname"><span class="pre">notes</span></span><a class="headerlink" href="#models.PetDisease.notes" title="Link to this definition"></a></dt>
+<dd><p>Дополнительные заметки.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id12">
+<span class="sig-name descname"><span class="pre">date_end</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id12" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id13">
+<span class="sig-name descname"><span class="pre">date_start</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#id13" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id14">
+<span class="sig-name descname"><span class="pre">disease_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#id14" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.PetDisease.get_info">
+<span class="sig-name descname"><span class="pre">get_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/models.html#PetDisease.get_info"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#models.PetDisease.get_info" title="Link to this definition"></a></dt>
+<dd><p>Возвращает краткое описание болезни питомца.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Строка вида «Отит (активно)».</p>
+</dd>
+<dt class="field-even">Тип результата<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.PetDisease.get_status">
+<span class="sig-name descname"><span class="pre">get_status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/models.html#PetDisease.get_status"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#models.PetDisease.get_status" title="Link to this definition"></a></dt>
+<dd><p>Возвращает статус болезни.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Один из статусов: «активно», «вылечено», «хроническое».</p>
+</dd>
+<dt class="field-even">Тип результата<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id15">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id15" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id16">
+<span class="sig-name descname"><span class="pre">notes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id16" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id17">
+<span class="sig-name descname"><span class="pre">pet_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#id17" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id18">
+<span class="sig-name descname"><span class="pre">status</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'активно'</span></em><a class="headerlink" href="#id18" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id19">
+<span class="sig-name descname"><span class="pre">treatment</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id19" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="models.Record">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">models.</span></span><span class="sig-name descname"><span class="pre">Record</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pet_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models.html#Record"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#models.Record" title="Link to this definition"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Модель записи о здоровье питомца.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.Record.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#models.Record.id" title="Link to this definition"></a></dt>
+<dd><p>Уникальный идентификатор записи.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.Record.pet_id">
+<span class="sig-name descname"><span class="pre">pet_id</span></span><a class="headerlink" href="#models.Record.pet_id" title="Link to this definition"></a></dt>
+<dd><p>Идентификатор питомца, к которому относится запись.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.Record.record_type">
+<span class="sig-name descname"><span class="pre">record_type</span></span><a class="headerlink" href="#models.Record.record_type" title="Link to this definition"></a></dt>
+<dd><p>Тип записи: vaccine, parasite, weight, note.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.Record.date">
+<span class="sig-name descname"><span class="pre">date</span></span><a class="headerlink" href="#models.Record.date" title="Link to this definition"></a></dt>
+<dd><p>Дата процедуры в формате ДД.ММ.ГГГГ.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.Record.value">
+<span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#models.Record.value" title="Link to this definition"></a></dt>
+<dd><p>Значение (название вакцины, вес, текст заметки).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.Record.next_date">
+<span class="sig-name descname"><span class="pre">next_date</span></span><a class="headerlink" href="#models.Record.next_date" title="Link to this definition"></a></dt>
+<dd><p>Дата следующей процедуры.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id20">
+<span class="sig-name descname"><span class="pre">date</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#id20" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="models.Record.get_info">
+<span class="sig-name descname"><span class="pre">get_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/models.html#Record.get_info"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#models.Record.get_info" title="Link to this definition"></a></dt>
+<dd><p>Возвращает краткое описание записи.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Строка вида «vaccine: Бешенство (15.10.2026)».</p>
+</dd>
+<dt class="field-even">Тип результата<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id21">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id21" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id22">
+<span class="sig-name descname"><span class="pre">next_date</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id22" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id23">
+<span class="sig-name descname"><span class="pre">pet_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#id23" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id24">
+<span class="sig-name descname"><span class="pre">record_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#id24" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id25">
+<span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id25" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ui.app">
+<span id="id26"></span><h2>Интерфейс приложения<a class="headerlink" href="#module-ui.app" title="Ссылка на этот заголовок"></a></h2>
+<p>Главное окно приложения PetHealth.</p>
+<p>Содержит класс PetHealthApp — единое окно, внутри которого
+переключаются экраны (фреймы): авторизация, регистрация,
+главный экран, карточка питомца и т.д.</p>
+<p>Реализует паттерн MVC: приложение — контроллер,
+фреймы — представления, DatabaseManager — модель.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ui.app.PetHealthApp">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ui.app.</span></span><span class="sig-name descname"><span class="pre">PetHealthApp</span></span><a class="reference internal" href="_modules/ui/app.html#PetHealthApp"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#ui.app.PetHealthApp" title="Link to this definition"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">CTk</span></code></p>
+<p>Главное окно приложения PetHealth.</p>
+<p>Единое окно, внутри которого переключаются экраны-фреймы.
+Отвечает за навигацию между экранами и хранит общие ресурсы
+(менеджер базы данных, текущего пользователя).</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ui.app.PetHealthApp.db">
+<span class="sig-name descname"><span class="pre">db</span></span><a class="headerlink" href="#ui.app.PetHealthApp.db" title="Link to this definition"></a></dt>
+<dd><p>Менеджер базы данных.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#database_manager.DatabaseManager" title="database_manager.DatabaseManager">DatabaseManager</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ui.app.PetHealthApp.current_frame">
+<span class="sig-name descname"><span class="pre">current_frame</span></span><a class="headerlink" href="#ui.app.PetHealthApp.current_frame" title="Link to this definition"></a></dt>
+<dd><p>Текущий отображаемый экран.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ctk.CTkFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.app.PetHealthApp.on_close">
+<span class="sig-name descname"><span class="pre">on_close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/app.html#PetHealthApp.on_close"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#ui.app.PetHealthApp.on_close" title="Link to this definition"></a></dt>
+<dd><p>Корректное закрытие приложения.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.app.PetHealthApp.show_catalog">
+<span class="sig-name descname"><span class="pre">show_catalog</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/app.html#PetHealthApp.show_catalog"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#ui.app.PetHealthApp.show_catalog" title="Link to this definition"></a></dt>
+<dd><p>Показывает справочник заболеваний.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.app.PetHealthApp.show_frame">
+<span class="sig-name descname"><span class="pre">show_frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame_class</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/app.html#PetHealthApp.show_frame"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#ui.app.PetHealthApp.show_frame" title="Link to this definition"></a></dt>
+<dd><p>Универсальный метод переключения экранов.</p>
+<p>Удаляет текущий фрейм и создаёт новый.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frame_class</strong> – Класс фрейма для отображения.</p></li>
+<li><p><strong>**kwargs</strong> – Параметры, передаваемые во фрейм.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.app.PetHealthApp.show_login">
+<span class="sig-name descname"><span class="pre">show_login</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/app.html#PetHealthApp.show_login"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#ui.app.PetHealthApp.show_login" title="Link to this definition"></a></dt>
+<dd><p>Показывает экран авторизации.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.app.PetHealthApp.show_main">
+<span class="sig-name descname"><span class="pre">show_main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/app.html#PetHealthApp.show_main"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#ui.app.PetHealthApp.show_main" title="Link to this definition"></a></dt>
+<dd><p>Показывает главный экран со списком питомцев.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.app.PetHealthApp.show_pet_card">
+<span class="sig-name descname"><span class="pre">show_pet_card</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pet_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/app.html#PetHealthApp.show_pet_card"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#ui.app.PetHealthApp.show_pet_card" title="Link to this definition"></a></dt>
+<dd><p>Показывает карточку питомца.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pet_id</strong> (<em>int</em>) – ID питомца.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.app.PetHealthApp.show_register">
+<span class="sig-name descname"><span class="pre">show_register</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/app.html#PetHealthApp.show_register"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#ui.app.PetHealthApp.show_register" title="Link to this definition"></a></dt>
+<dd><p>Показывает экран регистрации.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.app.PetHealthApp.show_reminders">
+<span class="sig-name descname"><span class="pre">show_reminders</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/app.html#PetHealthApp.show_reminders"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#ui.app.PetHealthApp.show_reminders" title="Link to this definition"></a></dt>
+<dd><p>Показывает экран напоминаний.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ui.app.PetHealthApp.show_reset_password">
+<span class="sig-name descname"><span class="pre">show_reset_password</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ui/app.html#PetHealthApp.show_reset_password"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#ui.app.PetHealthApp.show_reset_password" title="Link to this definition"></a></dt>
+<dd><p>Показывает экран восстановления пароля.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p id="module-ui.main_frame">Главный экран приложения PetHealth.</p>
+<p>Содержит класс MainFrame — экран со списком питомцев,
+шапкой и кнопками управления.</p>
+<p>Это фрейм (CTkFrame), который встраивается в главное окно
+PetHealthApp и переключается через него.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ui.main_frame.MainFrame">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ui.main_frame.</span></span><span class="sig-name descname"><span class="pre">MainFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">master</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">on_logout</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ui/main_frame.html#MainFrame"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#ui.main_frame.MainFrame" title="Link to this definition"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">CTkFrame</span></code></p>
+<p>Главный экран со списком питомцев.</p>
+<p>Отображает шапку с логотипом и кнопками, список питомцев
+и кнопку добавления нового питомца.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ui.main_frame.MainFrame.db">
+<span class="sig-name descname"><span class="pre">db</span></span><a class="headerlink" href="#ui.main_frame.MainFrame.db" title="Link to this definition"></a></dt>
+<dd><p>Менеджер базы данных.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#database_manager.DatabaseManager" title="database_manager.DatabaseManager">DatabaseManager</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ui.main_frame.MainFrame.on_logout">
+<span class="sig-name descname"><span class="pre">on_logout</span></span><a class="headerlink" href="#ui.main_frame.MainFrame.on_logout" title="Link to this definition"></a></dt>
+<dd><p>Функция выхода из аккаунта.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ui.main_frame.MainFrame.pets_frame">
+<span class="sig-name descname"><span class="pre">pets_frame</span></span><a class="headerlink" href="#ui.main_frame.MainFrame.pets_frame" title="Link to this definition"></a></dt>
+<dd><p>Фрейм со списком питомцев.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ctk.CTkScrollableFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<p id="module-ui.pet_card_frame">Экран карточки питомца.</p>
+<p>Содержит класс PetCardFrame — экран с подробной информацией
+о питомце: фото, кличка, вид, дата рождения, записи о здоровье,
+история болезней.</p>
+<p>Это фрейм (CTkFrame), который встраивается в главное окно
+PetHealthApp и переключается через него.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ui.pet_card_frame.PetCardFrame">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ui.pet_card_frame.</span></span><span class="sig-name descname"><span class="pre">PetCardFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">master</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pet_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">on_back</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ui/pet_card_frame.html#PetCardFrame"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#ui.pet_card_frame.PetCardFrame" title="Link to this definition"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">CTkFrame</span></code></p>
+<p>Экран карточки питомца.</p>
+<p>Отображает информацию о питомце и предоставляет доступ
+к записям о здоровье и истории болезней.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ui.pet_card_frame.PetCardFrame.db">
+<span class="sig-name descname"><span class="pre">db</span></span><a class="headerlink" href="#ui.pet_card_frame.PetCardFrame.db" title="Link to this definition"></a></dt>
+<dd><p>Менеджер базы данных.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#database_manager.DatabaseManager" title="database_manager.DatabaseManager">DatabaseManager</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ui.pet_card_frame.PetCardFrame.pet_id">
+<span class="sig-name descname"><span class="pre">pet_id</span></span><a class="headerlink" href="#ui.pet_card_frame.PetCardFrame.pet_id" title="Link to this definition"></a></dt>
+<dd><p>ID питомца.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ui.pet_card_frame.PetCardFrame.on_back">
+<span class="sig-name descname"><span class="pre">on_back</span></span><a class="headerlink" href="#ui.pet_card_frame.PetCardFrame.on_back" title="Link to this definition"></a></dt>
+<dd><p>Функция возврата на главный экран.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<p id="module-ui.catalog_frame">Экран справочника заболеваний.</p>
+<p>Содержит класс CatalogFrame — экран со списком всех заболеваний
+из справочника. Позволяет добавлять новые заболевания.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ui.catalog_frame.CatalogFrame">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ui.catalog_frame.</span></span><span class="sig-name descname"><span class="pre">CatalogFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">master</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">on_back</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ui/catalog_frame.html#CatalogFrame"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#ui.catalog_frame.CatalogFrame" title="Link to this definition"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">CTkFrame</span></code></p>
+<p>Экран справочника заболеваний.</p>
+<p>Отображает список заболеваний с описанием и видом животного.
+Позволяет добавить новое заболевание в справочник.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ui.catalog_frame.CatalogFrame.db">
+<span class="sig-name descname"><span class="pre">db</span></span><a class="headerlink" href="#ui.catalog_frame.CatalogFrame.db" title="Link to this definition"></a></dt>
+<dd><p>Менеджер базы данных.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#database_manager.DatabaseManager" title="database_manager.DatabaseManager">DatabaseManager</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ui.catalog_frame.CatalogFrame.on_back">
+<span class="sig-name descname"><span class="pre">on_back</span></span><a class="headerlink" href="#ui.catalog_frame.CatalogFrame.on_back" title="Link to this definition"></a></dt>
+<dd><p>Функция возврата на главный экран.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<p id="module-ui.reminders_frame">Экран напоминаний о предстоящих процедурах.</p>
+<p>Содержит класс RemindersFrame — экран со списком предстоящих
+процедур на ближайшие 7 дней.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ui.reminders_frame.RemindersFrame">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ui.reminders_frame.</span></span><span class="sig-name descname"><span class="pre">RemindersFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">master</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">on_back</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ui/reminders_frame.html#RemindersFrame"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#ui.reminders_frame.RemindersFrame" title="Link to this definition"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">CTkFrame</span></code></p>
+<p>Экран напоминаний.</p>
+<p>Отображает список предстоящих процедур (вакцинации, обработки,
+взвешивания) на основе поля next_date в таблице records.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ui.reminders_frame.RemindersFrame.db">
+<span class="sig-name descname"><span class="pre">db</span></span><a class="headerlink" href="#ui.reminders_frame.RemindersFrame.db" title="Link to this definition"></a></dt>
+<dd><p>Менеджер базы данных.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#database_manager.DatabaseManager" title="database_manager.DatabaseManager">DatabaseManager</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ui.reminders_frame.RemindersFrame.on_back">
+<span class="sig-name descname"><span class="pre">on_back</span></span><a class="headerlink" href="#ui.reminders_frame.RemindersFrame.on_back" title="Link to this definition"></a></dt>
+<dd><p>Функция возврата на главный экран.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-utils.print_pet">
+<span id="id27"></span><h2>Утилиты<a class="headerlink" href="#module-utils.print_pet" title="Ссылка на этот заголовок"></a></h2>
+<p>Модуль формирования PDF-отчёта о питомце.</p>
+<p>Создаёт PDF-файл с полной информацией о питомце: основные данные,
+записи о здоровье, история болезней. Файл можно распечатать
+или отдать ветеринару.</p>
+<p>Для поддержки кириллицы используется шрифт DejaVu Sans,
+который лежит в assets/fonts/.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="utils.print_pet.PetPDF">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.print_pet.</span></span><span class="sig-name descname"><span class="pre">PetPDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'portrait'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'A4'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_cache_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DEPRECATED'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/print_pet.html#PetPDF"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#utils.print_pet.PetPDF" title="Link to this definition"></a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">FPDF</span></code></p>
+<p>Класс PDF-документа с шапкой и подвалом.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.print_pet.PetPDF.footer">
+<span class="sig-name descname"><span class="pre">footer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/utils/print_pet.html#PetPDF.footer"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#utils.print_pet.PetPDF.footer" title="Link to this definition"></a></dt>
+<dd><p>Подвал каждой страницы.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.print_pet.PetPDF.header">
+<span class="sig-name descname"><span class="pre">header</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/utils/print_pet.html#PetPDF.header"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#utils.print_pet.PetPDF.header" title="Link to this definition"></a></dt>
+<dd><p>Шапка каждой страницы.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.print_pet.generate_pet_pdf">
+<span class="sig-prename descclassname"><span class="pre">utils.print_pet.</span></span><span class="sig-name descname"><span class="pre">generate_pet_pdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pet_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/utils/print_pet.html#generate_pet_pdf"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#utils.print_pet.generate_pet_pdf" title="Link to this definition"></a></dt>
+<dd><p>Создаёт PDF-отчёт о питомце.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<a class="reference internal" href="#database_manager.DatabaseManager" title="database_manager.DatabaseManager"><em>DatabaseManager</em></a>) – Менеджер базы данных.</p></li>
+<li><p><strong>pet_id</strong> (<em>int</em>) – ID питомца.</p></li>
+<li><p><strong>output_path</strong> (<em>str</em>) – Путь для сохранения PDF.
+Если None — имя формируется автоматически.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат<span class="colon">:</span></dt>
+<dd class="field-even"><p>Абсолютный путь к созданному PDF-файлу.</p>
+</dd>
+<dt class="field-odd">Тип результата<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Исключение<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – Если питомец с таким ID не найден.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="developer_manual.html" class="btn btn-neutral float-left" title="Руководство разработчика" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2026, Макарова Варвара Николаевна. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

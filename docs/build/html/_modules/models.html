@@ -1,0 +1,270 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>models &mdash; документация PetHealth 1.0</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=9ca2116e"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=9bfe3ffa"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="../genindex.html" />
+    <link rel="search" title="Поиск" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PetHealth
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Содержание:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">Архитектура приложения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../functionality.html">Функциональность приложения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_manual.html">Руководство пользователя</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_manual.html">Руководство разработчика</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Внутренний API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PetHealth</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Код модуля</a></li>
+      <li class="breadcrumb-item active">models</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Исходный код models</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Модели данных приложения PetHealth.</span>
+
+<span class="sd">Содержит четыре класса-модели:</span>
+<span class="sd">- Pet — информация о питомце;</span>
+<span class="sd">- Record — запись о здоровье (вакцинация, обработка, взвешивание, заметка);</span>
+<span class="sd">- Disease — заболевание из справочника;</span>
+<span class="sd">- PetDisease — запись о болезни питомца (медкарта).</span>
+
+<span class="sd">Каждый класс имеет метод get_info(), возвращающий строковое описание объекта.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+
+<div class="viewcode-block" id="Pet">
+<a class="viewcode-back" href="../api.html#models.Pet">[документация]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Pet</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Модель питомца.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        id (Optional[int]): Уникальный идентификатор питомца.</span>
+<span class="sd">        name (str): Кличка питомца.</span>
+<span class="sd">        species (str): Вид животного (кошка, собака, попугай, грызун, другое).</span>
+<span class="sd">        birth_date (Optional[str]): Дата рождения в формате ДД.ММ.ГГГГ.</span>
+<span class="sd">        photo_path (Optional[str]): Путь к файлу фотографии питомца.</span>
+<span class="sd">        notes (Optional[str]): Дополнительные заметки.</span>
+<span class="sd">    """</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="n">species</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="n">birth_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">photo_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">notes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Pet.get_info">
+<a class="viewcode-back" href="../api.html#models.Pet.get_info">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Возвращает краткое описание питомца.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Строка вида "Мурка (Кошка)".</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">species</span><span class="si">}</span><span class="s2">)"</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Record">
+<a class="viewcode-back" href="../api.html#models.Record">[документация]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Record</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Модель записи о здоровье питомца.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        id (Optional[int]): Уникальный идентификатор записи.</span>
+<span class="sd">        pet_id (int): Идентификатор питомца, к которому относится запись.</span>
+<span class="sd">        record_type (str): Тип записи: vaccine, parasite, weight, note.</span>
+<span class="sd">        date (str): Дата процедуры в формате ДД.ММ.ГГГГ.</span>
+<span class="sd">        value (Optional[str]): Значение (название вакцины, вес, текст заметки).</span>
+<span class="sd">        next_date (Optional[str]): Дата следующей процедуры.</span>
+<span class="sd">    """</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">pet_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">record_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="n">date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">next_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Record.get_info">
+<a class="viewcode-back" href="../api.html#models.Record.get_info">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Возвращает краткое описание записи.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Строка вида "vaccine: Бешенство (15.10.2026)".</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">record_type</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s1">'—'</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">date</span><span class="si">}</span><span class="s2">)"</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Disease">
+<a class="viewcode-back" href="../api.html#models.Disease">[документация]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Disease</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Модель заболевания из справочника.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        id (Optional[int]): Уникальный идентификатор заболевания.</span>
+<span class="sd">        name (str): Название заболевания.</span>
+<span class="sd">        description (Optional[str]): Краткое описание.</span>
+<span class="sd">        species (Optional[str]): Для какого вида животного характерно.</span>
+<span class="sd">    """</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">species</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Disease.get_info">
+<a class="viewcode-back" href="../api.html#models.Disease.get_info">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Возвращает краткое описание заболевания.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Название заболевания.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="PetDisease">
+<a class="viewcode-back" href="../api.html#models.PetDisease">[документация]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PetDisease</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Модель записи о болезни питомца (медкарта).</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        id (Optional[int]): Уникальный идентификатор записи.</span>
+<span class="sd">        pet_id (int): Идентификатор питомца.</span>
+<span class="sd">        disease_id (int): Идентификатор заболевания из справочника.</span>
+<span class="sd">        date_start (str): Дата начала заболевания.</span>
+<span class="sd">        date_end (Optional[str]): Дата окончания заболевания.</span>
+<span class="sd">        status (str): Статус: "активно", "вылечено", "хроническое".</span>
+<span class="sd">        treatment (Optional[str]): Назначенное лечение.</span>
+<span class="sd">        notes (Optional[str]): Дополнительные заметки.</span>
+<span class="sd">    """</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">pet_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">disease_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">date_start</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="n">date_end</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">status</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"активно"</span>
+    <span class="n">treatment</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">notes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="PetDisease.get_info">
+<a class="viewcode-back" href="../api.html#models.PetDisease.get_info">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Возвращает краткое описание болезни питомца.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Строка вида "Отит (активно)".</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"Болезнь #</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">disease_id</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="si">}</span><span class="s2">)"</span></div>
+
+
+<div class="viewcode-block" id="PetDisease.get_status">
+<a class="viewcode-back" href="../api.html#models.PetDisease.get_status">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Возвращает статус болезни.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Один из статусов: "активно", "вылечено", "хроническое".</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2026, Макарова Варвара Николаевна. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
